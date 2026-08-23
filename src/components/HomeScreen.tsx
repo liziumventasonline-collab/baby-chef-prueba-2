@@ -26,6 +26,7 @@ import {
   Download
 } from 'lucide-react';
 import { motion } from 'motion/react';
+import { BabyChefLogo } from './BabyChefLogo';
 
 const HomeRecipeCard: React.FC<{
   recipe: Recipe;
@@ -165,9 +166,7 @@ export const HomeScreen: React.FC = () => {
       <div className="mb-4 flex items-center justify-between gap-3 bg-white p-3.5 rounded-3xl border border-stone-200/80 shadow-2xs">
         <div className="flex items-center gap-3">
           {/* Baby Chef Official Logo */}
-          <div className="w-12 h-12 rounded-2xl bg-[#FCEEEA] p-0.5 shadow-2xs border border-stone-100 overflow-hidden shrink-0">
-            <img src="/logo.png" alt="Baby Chef Logo" className="w-full h-full object-cover rounded-xl" />
-          </div>
+          <BabyChefLogo size="sm" rounded="rounded-2xl" className="shadow-2xs border-0" />
 
           <div>
             <div className="flex items-center gap-1.5">

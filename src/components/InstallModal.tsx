@@ -2,6 +2,7 @@ import React from 'react';
 import { useApp } from '../context/AppContext';
 import { Download, Sparkles, X, Check } from 'lucide-react';
 import { motion } from 'motion/react';
+import { BabyChefLogo } from './BabyChefLogo';
 
 export const InstallModal: React.FC = () => {
   const { showInstallModal, setShowInstallModal, installAppPrompt, isInstallable, isPWAInstalled } = useApp();
@@ -41,12 +42,8 @@ export const InstallModal: React.FC = () => {
         </div>
 
         {/* Big Official App Icon */}
-        <div className="relative w-20 h-20 rounded-3xl bg-white p-1 shadow-lg shadow-[#E06D53]/25 mx-auto mb-3.5 border-2 border-stone-100 overflow-hidden">
-          <img
-            src="/logo.png"
-            alt="Baby Chef"
-            className="w-full h-full object-cover rounded-2xl"
-          />
+        <div className="mx-auto mb-3.5 flex justify-center">
+          <BabyChefLogo size="lg" rounded="rounded-3xl" className="shadow-lg shadow-[#E06D53]/25" />
         </div>
 
         <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#E06D53]/10 text-[#E06D53] text-xs font-bold mb-2">

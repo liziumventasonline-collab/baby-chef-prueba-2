@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useApp } from '../context/AppContext';
 import { ArrowLeft, ArrowRight, Heart, Calendar, Sparkles, Scale, Ruler, UserCheck } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { BabyChefLogo } from './BabyChefLogo';
 
 export const OnboardingWizard: React.FC = () => {
   const { baby, completeOnboarding } = useApp();
@@ -101,8 +102,8 @@ export const OnboardingWizard: React.FC = () => {
               transition={{ duration: 0.25 }}
               className="flex-1 flex flex-col items-center justify-center text-center my-auto"
             >
-              <div className="w-24 h-24 rounded-3xl bg-white flex items-center justify-center mb-6 shadow-md border-2 border-white overflow-hidden p-1">
-                <img src="/logo.png" alt="Baby Chef" className="w-full h-full object-cover rounded-2xl" />
+              <div className="mb-6">
+                <BabyChefLogo size="xl" rounded="rounded-3xl" className="shadow-lg shadow-[#E06D53]/15" />
               </div>
               <h2 className="text-2xl font-bold text-[#292524] mb-3 font-display">
                 ¡Bienvenida a Baby Chef!

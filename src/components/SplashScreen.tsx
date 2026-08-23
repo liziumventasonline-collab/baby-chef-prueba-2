@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
+import { BabyChefLogo } from './BabyChefLogo';
 
 export const SplashScreen: React.FC = () => {
   return (
@@ -16,13 +17,7 @@ export const SplashScreen: React.FC = () => {
         {/* App Logo Container */}
         <div className="relative mb-6">
           <div className="absolute -inset-2 rounded-3xl bg-[#E06D53]/15 blur-xl animate-pulse" />
-          <div className="relative w-28 h-28 rounded-3xl shadow-xl shadow-[#E06D53]/20 bg-white p-2 flex items-center justify-center border-2 border-white/60 overflow-hidden">
-            <img
-              src="/logo.png"
-              alt="Baby Chef Logo"
-              className="w-full h-full object-cover rounded-2xl"
-            />
-          </div>
+          <BabyChefLogo size="xl" rounded="rounded-3xl" className="shadow-xl shadow-[#E06D53]/20" />
         </div>
 
         {/* Brand Name */}
