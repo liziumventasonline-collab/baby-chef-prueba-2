@@ -119,6 +119,7 @@ export const HomeScreen: React.FC = () => {
     favoriteIds,
     foodsTracker,
     setShowInstallModal,
+    installAppPrompt,
     isPWAInstalled
   } = useApp();
 
@@ -209,7 +210,7 @@ export const HomeScreen: React.FC = () => {
       {/* Install App Quick Banner if not yet installed */}
       {!isPWAInstalled && (
         <div
-          onClick={() => setShowInstallModal(true)}
+          onClick={installAppPrompt}
           className="mb-4 p-3 bg-gradient-to-r from-[#FFF5F2] to-[#FEF0EC] border border-[#F28B72]/40 rounded-2xl flex items-center justify-between gap-3 shadow-2xs active-press cursor-pointer hover:border-[#E06D53] transition-all"
         >
           <div className="flex items-center gap-2.5">

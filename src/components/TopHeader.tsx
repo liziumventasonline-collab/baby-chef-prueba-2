@@ -9,7 +9,16 @@ interface TopHeaderProps {
 }
 
 export const TopHeader: React.FC<TopHeaderProps> = ({ title, onOpenShopping }) => {
-  const { baby, isPWAInstalled, isInstallable, setShowInstallModal, shoppingList, setExtendedView, setActiveTab } = useApp();
+  const {
+    baby,
+    isPWAInstalled,
+    isInstallable,
+    setShowInstallModal,
+    installAppPrompt,
+    shoppingList,
+    setExtendedView,
+    setActiveTab
+  } = useApp();
   const age = calculateBabyAge(baby.birthDate);
 
   const pendingShoppingCount = shoppingList.filter(i => !i.checked).length;
@@ -90,7 +99,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({ title, onOpenShopping }) =
         {!isPWAInstalled && (
           <button
             id="top-install-app-btn"
-            onClick={() => setShowInstallModal(true)}
+            onClick={installAppPrompt}
             className="flex items-center gap-1 py-1.5 px-2.5 rounded-full bg-[#E06D53] text-white text-xs font-bold active-press shadow-sm hover:bg-[#DE5D43] transition-colors"
           >
             <Download className="w-3.5 h-3.5" />

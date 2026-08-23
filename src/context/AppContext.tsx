@@ -377,14 +377,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const installAppPrompt = async () => {
     if (deferredPrompt) {
       try {
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        if (outcome === 'accepted') {
+        await deferredPrompt.prompt();
+        const choice = await deferredPrompt.userChoice;
+        if (choice && choice.outcome === 'accepted') {
           setIsPWAInstalled(true);
         }
         setDeferredPrompt(null);
+        setShowInstallModal(false);
       } catch (err) {
         console.error('PWA prompt error:', err);
+      }
+    } else {
+      const isIframe = window.self !== window.top;
+      if (isIframe) {
+        window.open(window.location.href, '_blank');
       }
     }
   };
