@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="brandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F28B72" />
+      <stop offset="100%" stop-color="#DE5D43" />
+    </linearGradient>
+    <linearGradient id="warmGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFDF9" />
+      <stop offset="100%" stop-color="#FCEEEA" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#7C2D12" flood-opacity="0.18" />
+    </filter>
+  </defs>
+
+  <!-- Background rounded squircle -->
+  <rect width="512" height="512" rx="128" fill="url(#brandGrad)" />
+  
+  <!-- Subtle decorative ring -->
+  <circle cx="256" cy="256" r="210" fill="none" stroke="#FFFFFF" stroke-opacity="0.15" stroke-width="8" />
+
+  <!-- Chef Hat / Baby Bowl Base Icon -->
+  <g filter="url(#shadow)">
+    <!-- Chef Hat Puffs -->
+    <path d="M 180 230 C 140 230, 130 180, 170 145 C 170 100, 240 85, 256 125 C 272 85, 342 100, 342 145 C 382 180, 372 230, 332 230 Z" fill="url(#warmGrad)" />
+    
+    <!-- Hat Band / Bowl Rim -->
+    <rect x="170" y="222" width="172" height="28" rx="14" fill="#FFFFFF" />
+    
+    <!-- Cute baby spoon crossing -->
+    <path d="M 220 270 Q 256 315 292 270" stroke="#DE5D43" stroke-width="12" stroke-linecap="round" fill="none" />
+    
+    <!-- Cheerful Little Heart Motif -->
+    <path d="M 256 175 C 256 165, 242 155, 230 165 C 215 178, 256 208, 256 208 C 256 208, 297 178, 282 165 C 270 155, 256 165, 256 175 Z" fill="#DE5D43" />
+    
+    <!-- Baby feeding bowl below -->
+    <path d="M 150 280 C 150 365, 362 365, 362 280 Z" fill="url(#warmGrad)" />
+    <ellipse cx="256" cy="280" rx="106" ry="18" fill="#FFFFFF" />
+    
+    <!-- Little steam/sparkle of love -->
+    <circle cx="340" cy="150" r="7" fill="#FDE047" />
+    <circle cx="160" cy="170" r="5" fill="#FDE047" />
+  </g>
+</svg>
