@@ -2,6 +2,7 @@ import React from 'react';
 import { useApp } from '../context/AppContext';
 import { calculateBabyAge, getRecommendedStageMonth } from '../utils/helpers';
 import { FEEDING_STAGES } from '../data/feedingStages';
+import { evaluateGrowthParameter } from '../data/whoGrowthStandards';
 import {
   ChefHat,
   Apple,
@@ -18,7 +19,9 @@ import {
   Calendar,
   Globe2,
   Utensils,
-  Users
+  Users,
+  TrendingUp,
+  Scale
 } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -26,6 +29,7 @@ export const HomeScreen: React.FC = () => {
   const {
     baby,
     recipes,
+    growthRecords,
     setActiveTab,
     setSelectedStageMonth,
     setSelectedRecipeId,
@@ -49,11 +53,28 @@ export const HomeScreen: React.FC = () => {
     setActiveTab('alimentacion');
   };
 
+  const acceptedFoodsCount = foodsTracker.filter(f => f.status === 'accepted').length;
+
+  // Latest growth record evaluation
+  const sortedGrowth = [...growthRecords].sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  );
+  const latestGrowth = sortedGrowth[0] || {
+    weightKg: baby.birthWeight,
+    heightCm: baby.birthHeight,
+    ageMonths: age.months,
+    date: baby.birthDate
+  };
+  const growthEval = evaluateGrowthParameter(
+    latestGrowth.weightKg,
+    latestGrowth.ageMonths,
+    'weight',
+    baby.gender
+  );
+
   const handleOpenRecipe = (recipeId: string) => {
     setSelectedRecipeId(recipeId);
   };
-
-  const acceptedFoodsCount = foodsTracker.filter((f) => f.status === 'accepted').length;
 
   return (
     <div id="home-screen" className="flex-1 overflow-y-auto px-4 pt-3 pb-24 no-scrollbar bg-stone-50">
@@ -254,7 +275,7 @@ export const HomeScreen: React.FC = () => {
       <div
         id="home-fb-orientaciones-banner"
         onClick={() => setActiveTab('orientaciones')}
-        className="mb-6 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 text-white rounded-3xl p-4 shadow-md shadow-blue-900/10 active-press cursor-pointer hover:shadow-lg transition-all relative overflow-hidden"
+        className="mb-4 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 text-white rounded-3xl p-4 shadow-md shadow-blue-900/10 active-press cursor-pointer hover:shadow-lg transition-all relative overflow-hidden"
       >
         <div className="absolute right-0 bottom-0 text-5xl opacity-15 pointer-events-none translate-x-2 translate-y-2">
           👥
@@ -274,6 +295,39 @@ export const HomeScreen: React.FC = () => {
               </h5>
               <p className="text-[11px] text-blue-100/90 line-clamp-1">
                 6 canales para resolver dudas de BLW, papillas y crianza
+              </p>
+            </div>
+          </div>
+          <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+            <ArrowRight className="w-4 h-4 text-white" />
+          </div>
+        </div>
+      </div>
+
+      {/* 5c. Curvas de Crecimiento & Carnet de Salud OMS Card */}
+      <div
+        id="home-growth-curves-banner"
+        onClick={() => setActiveTab('perfil')}
+        className="mb-6 bg-gradient-to-r from-emerald-700 via-teal-800 to-emerald-900 text-white rounded-3xl p-4 shadow-md shadow-emerald-950/15 active-press cursor-pointer hover:shadow-lg transition-all relative overflow-hidden"
+      >
+        <div className="absolute right-0 bottom-0 text-5xl opacity-15 pointer-events-none translate-x-2 translate-y-2">
+          📈
+        </div>
+        <div className="relative z-10 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-emerald-500/30 border border-emerald-400/40 text-emerald-200 font-bold flex items-center justify-center shadow-xs shrink-0">
+              <TrendingUp className="w-5 h-5 text-emerald-100" />
+            </div>
+            <div>
+              <div className="inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-wider text-emerald-200 bg-white/10 px-2 py-0.5 rounded-md mb-0.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block animate-pulse" />
+                <span>Carnet de Vacunación & Salud</span>
+              </div>
+              <h5 className="text-sm font-bold font-display text-white leading-tight">
+                Curvas de Crecimiento OMS
+              </h5>
+              <p className="text-[11px] text-emerald-100/90 line-clamp-1">
+                {latestGrowth.weightKg} kg • {latestGrowth.heightCm} cm ({growthEval.percentileApprox})
               </p>
             </div>
           </div>

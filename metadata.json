@@ -1,6 +1,6 @@
 {
   "name": "Baby Chef",
-  "description": "Aplicación móvil para la alimentación complementaria del bebé: recetas por meses, guía de alimentos, seguimiento de crecimiento y lista de compras.",
+  "description": "Aplicación móvil para la alimentación complementaria del bebé: recetas por meses, guía de alimentos, curvas de crecimiento OMS estilo carnet de vacunas y salud, páginas de orientación y lista de compras.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
