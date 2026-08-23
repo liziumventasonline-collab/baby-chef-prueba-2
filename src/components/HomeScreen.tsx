@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
+import { Recipe } from '../types';
 import { calculateBabyAge, getRecommendedStageMonth } from '../utils/helpers';
 import { FEEDING_STAGES } from '../data/feedingStages';
 import { evaluateGrowthParameter } from '../data/whoGrowthStandards';
@@ -21,9 +22,88 @@ import {
   Utensils,
   Users,
   TrendingUp,
-  Scale
+  Scale,
+  Download
 } from 'lucide-react';
 import { motion } from 'motion/react';
+
+const HomeRecipeCard: React.FC<{
+  recipe: Recipe;
+  isFav: boolean;
+  onOpen: (id: string) => void;
+  onToggleFav: (id: string) => void;
+}> = ({ recipe, isFav, onOpen, onToggleFav }) => {
+  const [imgErr, setImgErr] = useState(false);
+
+  return (
+    <div
+      id={`recipe-card-${recipe.id}`}
+      onClick={() => onOpen(recipe.id)}
+      className="flex items-center gap-3.5 p-3 rounded-2xl bg-white border border-stone-200/80 shadow-2xs active-press cursor-pointer hover:border-emerald-300 transition-all"
+    >
+      {/* Photo (Only shown if available and loaded without errors) */}
+      {recipe.imageUrl && !imgErr && (
+        <div className="relative w-20 h-20 rounded-xl overflow-hidden shrink-0 bg-stone-100">
+          <img
+            src={recipe.imageUrl}
+            alt={recipe.title}
+            className="w-full h-full object-cover"
+            loading="lazy"
+            referrerPolicy="no-referrer"
+            onError={() => setImgErr(true)}
+          />
+          <span className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded-md bg-black/60 backdrop-blur-xs text-white text-[9px] font-bold">
+            {recipe.ageLabel}
+          </span>
+        </div>
+      )}
+
+      {/* Details */}
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-1.5">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700">
+            {recipe.categoryLabel}
+          </span>
+          {(!recipe.imageUrl || imgErr) && (
+            <span className="px-1.5 py-0.5 rounded-md bg-rose-500 text-white text-[9px] font-bold">
+              {recipe.ageLabel}
+            </span>
+          )}
+        </div>
+        <h5 className="text-sm font-bold text-stone-900 truncate mt-0.5 leading-snug">
+          {recipe.title}
+        </h5>
+        <div className="flex items-center gap-3 mt-1.5 text-xs text-stone-500">
+          <span className="flex items-center gap-1">
+            <Clock className="w-3.5 h-3.5 text-stone-400" />
+            {recipe.prepTimeMinutes} min
+          </span>
+          <span className="text-[11px] px-2 py-0.5 rounded-full bg-stone-100 font-medium text-stone-700">
+            {recipe.texture.split(' ')[0]}
+          </span>
+        </div>
+      </div>
+
+      {/* Favorite Heart Button */}
+      <button
+        id={`fav-btn-${recipe.id}`}
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          onToggleFav(recipe.id);
+        }}
+        className="p-2 text-stone-400 hover:text-rose-600 rounded-full active-press"
+        aria-label="Guardar en favoritos"
+      >
+        <Heart
+          className={`w-5 h-5 transition-colors ${
+            isFav ? 'fill-rose-500 text-rose-500' : 'text-stone-400'
+          }`}
+        />
+      </button>
+    </div>
+  );
+};
 
 export const HomeScreen: React.FC = () => {
   const {
@@ -37,7 +117,9 @@ export const HomeScreen: React.FC = () => {
     toggleFavorite,
     isFavorite,
     favoriteIds,
-    foodsTracker
+    foodsTracker,
+    setShowInstallModal,
+    isPWAInstalled
   } = useApp();
 
   const age = calculateBabyAge(baby.birthDate);
@@ -78,16 +160,77 @@ export const HomeScreen: React.FC = () => {
 
   return (
     <div id="home-screen" className="flex-1 overflow-y-auto px-4 pt-3 pb-24 no-scrollbar bg-stone-50">
-      {/* 1. Header Greeting */}
-      <div className="mb-4">
-        <h2 className="text-2xl font-black text-stone-900 tracking-tight font-display flex items-center gap-1.5">
-          <span>Hola, {baby.name || 'bebé'}</span>
-          <span className="inline-block animate-wave origin-bottom-right">👋</span>
-        </h2>
-        <p className="text-sm font-medium text-stone-600 mt-0.5">
-          {baby.name || 'Tu bebé'} tiene <strong className="text-emerald-700 font-bold">{age.displayText}</strong>
-        </p>
+      {/* 1. App Brand & Baby Greeting */}
+      <div className="mb-4 flex items-center justify-between gap-3 bg-white p-3.5 rounded-3xl border border-stone-200/80 shadow-2xs">
+        <div className="flex items-center gap-3">
+          {/* Baby Chef Official Logo */}
+          <div className="w-12 h-12 rounded-2xl bg-[#FCEEEA] p-0.5 shadow-2xs border border-stone-100 overflow-hidden shrink-0">
+            <img src="/logo.png" alt="Baby Chef Logo" className="w-full h-full object-cover rounded-xl" />
+          </div>
+
+          <div>
+            <div className="flex items-center gap-1.5">
+              <h2 className="text-base font-extrabold text-stone-900 tracking-tight font-display">
+                Baby Chef
+              </h2>
+              <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">
+                Alimentación
+              </span>
+            </div>
+            <p className="text-xs text-stone-600 font-medium">
+              Hola, <strong className="text-stone-900 font-bold">{baby.name || 'bebé'}</strong> ({age.displayText})
+            </p>
+          </div>
+        </div>
+
+        {/* Baby Photo/Avatar link to profile */}
+        <button
+          onClick={() => setActiveTab('perfil')}
+          className="relative shrink-0 active-press group"
+          title="Ver perfil del bebé"
+        >
+          <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-[#F28B72] to-[#E06D53] p-0.5 shadow-xs">
+            <div className="w-full h-full rounded-full bg-white flex items-center justify-center text-lg overflow-hidden">
+              {baby.avatar || baby.photoUrl ? (
+                <img
+                  src={baby.avatar || baby.photoUrl}
+                  alt={baby.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span>{baby.gender === 'girl' ? '👧' : '👶'}</span>
+              )}
+            </div>
+          </div>
+          <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full" />
+        </button>
       </div>
+
+      {/* Install App Quick Banner if not yet installed */}
+      {!isPWAInstalled && (
+        <div
+          onClick={() => setShowInstallModal(true)}
+          className="mb-4 p-3 bg-gradient-to-r from-[#FFF5F2] to-[#FEF0EC] border border-[#F28B72]/40 rounded-2xl flex items-center justify-between gap-3 shadow-2xs active-press cursor-pointer hover:border-[#E06D53] transition-all"
+        >
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-[#E06D53] text-white flex items-center justify-center shrink-0 shadow-2xs">
+              <Download className="w-4 h-4" />
+            </div>
+            <div>
+              <p className="text-xs font-extrabold text-[#292524] leading-tight">
+                Instala Baby Chef en tu pantalla principal 📲
+              </p>
+              <p className="text-[11px] text-stone-600">
+                Acceso directo con un toque y uso sin internet
+              </p>
+            </div>
+          </div>
+
+          <span className="px-2.5 py-1 bg-[#E06D53] text-white text-[11px] font-bold rounded-lg shrink-0 shadow-2xs">
+            Instalar
+          </span>
+        </div>
+      )}
 
       {/* 2. Tarjeta Destacada: ETAPA ACTUAL */}
       <motion.div
@@ -359,68 +502,15 @@ export const HomeScreen: React.FC = () => {
         </div>
 
         <div className="space-y-3">
-          {quickRecipes.map((recipe) => {
-            const fav = isFavorite(recipe.id);
-            return (
-              <div
-                key={recipe.id}
-                id={`recipe-card-${recipe.id}`}
-                onClick={() => handleOpenRecipe(recipe.id)}
-                className="flex items-center gap-3.5 p-3 rounded-2xl bg-white border border-stone-200/80 shadow-2xs active-press cursor-pointer hover:border-emerald-300 transition-all"
-              >
-                {/* Photo */}
-                <div className="relative w-20 h-20 rounded-xl overflow-hidden shrink-0 bg-stone-100">
-                  <img
-                    src={recipe.imageUrl}
-                    alt={recipe.title}
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                    referrerPolicy="no-referrer"
-                  />
-                  <span className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded-md bg-black/60 backdrop-blur-xs text-white text-[9px] font-bold">
-                    {recipe.ageLabel}
-                  </span>
-                </div>
-
-                {/* Details */}
-                <div className="flex-1 min-w-0">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700">
-                    {recipe.categoryLabel}
-                  </span>
-                  <h5 className="text-sm font-bold text-stone-900 truncate mt-0.5 leading-snug">
-                    {recipe.title}
-                  </h5>
-                  <div className="flex items-center gap-3 mt-1.5 text-xs text-stone-500">
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5 text-stone-400" />
-                      {recipe.prepTimeMinutes} min
-                    </span>
-                    <span className="text-[11px] px-2 py-0.5 rounded-full bg-stone-100 font-medium text-stone-700">
-                      {recipe.texture.split(' ')[0]}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Favorite Heart Button */}
-                <button
-                  id={`fav-btn-${recipe.id}`}
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleFavorite(recipe.id);
-                  }}
-                  className="p-2 text-stone-400 hover:text-rose-600 rounded-full active-press"
-                  aria-label="Guardar en favoritos"
-                >
-                  <Heart
-                    className={`w-5 h-5 transition-colors ${
-                      fav ? 'fill-rose-500 text-rose-500' : 'text-stone-400'
-                    }`}
-                  />
-                </button>
-              </div>
-            );
-          })}
+          {quickRecipes.map((recipe) => (
+            <HomeRecipeCard
+              key={recipe.id}
+              recipe={recipe}
+              isFav={isFavorite(recipe.id)}
+              onOpen={handleOpenRecipe}
+              onToggleFav={toggleFavorite}
+            />
+          ))}
         </div>
       </div>
     </div>

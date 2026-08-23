@@ -31,8 +31,8 @@ export const TopHeader: React.FC<TopHeaderProps> = ({ title, onOpenShopping }) =
         <div className="relative">
           <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#F28B72] to-[#E06D53] p-0.5 shadow-sm">
             <div className="w-full h-full rounded-full bg-white flex items-center justify-center text-lg overflow-hidden">
-              {baby.avatar ? (
-                <img src={baby.avatar} alt={baby.name} className="w-full h-full object-cover" />
+              {baby.avatar || baby.photoUrl ? (
+                <img src={baby.avatar || baby.photoUrl} alt={baby.name} className="w-full h-full object-cover" />
               ) : (
                 <span>{baby.gender === 'girl' ? '👧' : '👶'}</span>
               )}

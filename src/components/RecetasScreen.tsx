@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
-import { MealCategory } from '../types';
+import { MealCategory, Recipe } from '../types';
 import {
   Search,
   Clock,
@@ -12,6 +12,163 @@ import {
   X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+
+interface RecipeCardItemProps {
+  recipe: Recipe;
+  isFavorite: boolean;
+  onToggleFavorite: (id: string) => void;
+  onSelect: (id: string) => void;
+}
+
+const RecipeCardItem: React.FC<RecipeCardItemProps> = ({
+  recipe,
+  isFavorite,
+  onToggleFavorite,
+  onSelect
+}) => {
+  const [imgError, setImgError] = useState(false);
+
+  return (
+    <motion.div
+      id={`recipe-item-${recipe.id}`}
+      layout
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.2 }}
+      onClick={() => onSelect(recipe.id)}
+      className="bg-white rounded-3xl overflow-hidden border border-[#E7E5E4] shadow-xs active-press cursor-pointer hover:border-[#E06D53]/40 transition-all flex flex-col"
+    >
+      {/* Photo with Overlay Badges (Only rendered if image exists and has no error) */}
+      {recipe.imageUrl && !imgError ? (
+        <div className="relative h-44 w-full bg-[#F5F5F4] overflow-hidden">
+          <img
+            src={recipe.imageUrl}
+            alt={recipe.title}
+            referrerPolicy="no-referrer"
+            onError={() => setImgError(true)}
+            className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500"
+            loading="lazy"
+          />
+
+          {/* Gradient shade */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
+
+          {/* Top Badges: Age & Category */}
+          <div className="absolute top-3 left-3 flex items-center gap-1.5">
+            <span className="px-2.5 py-1 rounded-full bg-[#E06D53] text-white text-[11px] font-extrabold shadow-sm">
+              {recipe.ageLabel}
+            </span>
+            {recipe.blwFriendly && (
+              <span className="px-2 py-0.5 rounded-full bg-white/90 backdrop-blur-xs text-[#4A7C59] text-[10px] font-bold shadow-sm">
+                BLW
+              </span>
+            )}
+          </div>
+
+          {/* Favorite Heart Button */}
+          <button
+            id={`favorite-card-btn-${recipe.id}`}
+            type="button"
+            onClick={e => {
+              e.stopPropagation();
+              onToggleFavorite(recipe.id);
+            }}
+            className="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center text-[#DE5D43] shadow-sm active-press"
+            aria-label="Guardar receta"
+          >
+            <Heart
+              className={`w-5 h-5 transition-transform ${
+                isFavorite ? 'fill-[#DE5D43] scale-110' : 'text-[#78716C]'
+              }`}
+            />
+          </button>
+
+          {/* Bottom Image Info */}
+          <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white text-xs font-semibold">
+            <span className="flex items-center gap-1 bg-black/40 backdrop-blur-xs px-2 py-0.5 rounded-lg">
+              <Clock className="w-3.5 h-3.5" />
+              {recipe.prepTimeMinutes} min
+            </span>
+            <span className="bg-black/40 backdrop-blur-xs px-2 py-0.5 rounded-lg text-[11px]">
+              {recipe.difficulty}
+            </span>
+          </div>
+        </div>
+      ) : (
+        /* Clean Header for text-only recipes */
+        <div className="p-4 pb-0 flex items-center justify-between">
+          <div className="flex items-center gap-1.5">
+            <span className="px-2.5 py-1 rounded-full bg-[#E06D53] text-white text-[11px] font-extrabold shadow-xs">
+              {recipe.ageLabel}
+            </span>
+            <span className="px-2.5 py-1 rounded-full bg-[#FAF7F2] border border-[#E7E5E4] text-[#57534E] text-[11px] font-semibold">
+              {recipe.categoryLabel}
+            </span>
+            {recipe.blwFriendly && (
+              <span className="px-2 py-0.5 rounded-full bg-[#EAF2EB] text-[#2D5A3C] text-[10px] font-bold">
+                BLW
+              </span>
+            )}
+          </div>
+
+          <button
+            id={`favorite-card-btn-${recipe.id}`}
+            type="button"
+            onClick={e => {
+              e.stopPropagation();
+              onToggleFavorite(recipe.id);
+            }}
+            className="w-9 h-9 rounded-full bg-[#FAF7F2] border border-[#E7E5E4] flex items-center justify-center text-[#DE5D43] shadow-2xs active-press"
+            aria-label="Guardar receta"
+          >
+            <Heart
+              className={`w-5 h-5 transition-transform ${
+                isFavorite ? 'fill-[#DE5D43] scale-110' : 'text-[#78716C]'
+              }`}
+            />
+          </button>
+        </div>
+      )}
+
+      {/* Card Content Body */}
+      <div className="p-4">
+        {recipe.imageUrl && !imgError && (
+          <span className="text-[10px] font-bold uppercase tracking-wider text-[#4A7C59] block mb-1">
+            {recipe.categoryLabel}
+          </span>
+        )}
+
+        <h3 className="text-base font-bold text-[#292524] font-display leading-tight mb-1.5">
+          {recipe.title}
+        </h3>
+
+        {(!recipe.imageUrl || imgError) && (
+          <div className="flex items-center gap-3 text-xs text-[#78716C] mb-2 font-medium">
+            <span className="flex items-center gap-1">
+              <Clock className="w-3.5 h-3.5 text-[#A8A29E]" />
+              {recipe.prepTimeMinutes} min
+            </span>
+            <span>•</span>
+            <span>{recipe.difficulty}</span>
+          </div>
+        )}
+
+        <p className="text-xs text-[#78716C] line-clamp-2 leading-relaxed mb-3">
+          {recipe.summary}
+        </p>
+
+        <div className="flex items-center justify-between pt-2.5 border-t border-[#F5F5F4] text-xs">
+          <span className="text-[#57534E] font-medium text-[11px] truncate max-w-[200px]">
+            🥣 {recipe.texture}
+          </span>
+          <span className="text-[#DE5D43] font-bold text-xs flex items-center gap-0.5 shrink-0">
+            Ver receta →
+          </span>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
 
 export const RecetasScreen: React.FC = () => {
   const {
@@ -167,100 +324,15 @@ export const RecetasScreen: React.FC = () => {
         </div>
       ) : (
         <div className="space-y-3.5">
-          {filteredRecipes.map(recipe => {
-            const fav = isFavorite(recipe.id);
-
-            return (
-              <motion.div
-                key={recipe.id}
-                id={`recipe-item-${recipe.id}`}
-                layout
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.2 }}
-                onClick={() => setSelectedRecipeId(recipe.id)}
-                className="bg-white rounded-3xl overflow-hidden border border-[#E7E5E4] shadow-xs active-press cursor-pointer hover:border-[#E06D53]/40 transition-all flex flex-col"
-              >
-                {/* Photo with Overlay Badges */}
-                <div className="relative h-44 w-full bg-[#F5F5F4] overflow-hidden">
-                  <img
-                    src={recipe.imageUrl}
-                    alt={recipe.title}
-                    className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500"
-                    loading="lazy"
-                  />
-
-                  {/* Gradient shade */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
-
-                  {/* Top Badges: Age & Category */}
-                  <div className="absolute top-3 left-3 flex items-center gap-1.5">
-                    <span className="px-2.5 py-1 rounded-full bg-[#E06D53] text-white text-[11px] font-extrabold shadow-sm">
-                      {recipe.ageLabel}
-                    </span>
-                    {recipe.blwFriendly && (
-                      <span className="px-2 py-0.5 rounded-full bg-white/90 backdrop-blur-xs text-[#4A7C59] text-[10px] font-bold shadow-sm">
-                        BLW
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Favorite Heart Button */}
-                  <button
-                    id={`favorite-card-btn-${recipe.id}`}
-                    type="button"
-                    onClick={e => {
-                      e.stopPropagation();
-                      toggleFavorite(recipe.id);
-                    }}
-                    className="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center text-[#DE5D43] shadow-sm active-press"
-                    aria-label="Guardar receta"
-                  >
-                    <Heart
-                      className={`w-5 h-5 transition-transform ${
-                        fav ? 'fill-[#DE5D43] scale-110' : 'text-[#78716C]'
-                      }`}
-                    />
-                  </button>
-
-                  {/* Bottom Image Info */}
-                  <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white text-xs font-semibold">
-                    <span className="flex items-center gap-1 bg-black/40 backdrop-blur-xs px-2 py-0.5 rounded-lg">
-                      <Clock className="w-3.5 h-3.5" />
-                      {recipe.prepTimeMinutes} min
-                    </span>
-                    <span className="bg-black/40 backdrop-blur-xs px-2 py-0.5 rounded-lg text-[11px]">
-                      {recipe.difficulty}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Card Content Body */}
-                <div className="p-4">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#4A7C59] block mb-1">
-                    {recipe.categoryLabel}
-                  </span>
-
-                  <h3 className="text-base font-bold text-[#292524] font-display leading-tight mb-1.5">
-                    {recipe.title}
-                  </h3>
-
-                  <p className="text-xs text-[#78716C] line-clamp-2 leading-relaxed mb-3">
-                    {recipe.summary}
-                  </p>
-
-                  <div className="flex items-center justify-between pt-2.5 border-t border-[#F5F5F4] text-xs">
-                    <span className="text-[#57534E] font-medium text-[11px]">
-                      🥣 {recipe.texture}
-                    </span>
-                    <span className="text-[#DE5D43] font-bold text-xs flex items-center gap-0.5">
-                      Ver receta →
-                    </span>
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
+          {filteredRecipes.map(recipe => (
+            <RecipeCardItem
+              key={recipe.id}
+              recipe={recipe}
+              isFavorite={isFavorite(recipe.id)}
+              onToggleFavorite={toggleFavorite}
+              onSelect={setSelectedRecipeId}
+            />
+          ))}
         </div>
       )}
     </div>

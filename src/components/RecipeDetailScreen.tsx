@@ -33,6 +33,7 @@ export const RecipeDetailScreen: React.FC = () => {
   // Local checklist state for this recipe's shopping list
   const [checkedIngredients, setCheckedIngredients] = useState<Record<string, boolean>>({});
   const [showAddedToast, setShowAddedToast] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   if (!recipe) return null;
 
@@ -113,30 +114,58 @@ export const RecipeDetailScreen: React.FC = () => {
 
       {/* Main Scrollable Recipe Body */}
       <div className="flex-1 overflow-y-auto px-4 pt-2 pb-24 no-scrollbar space-y-5">
-        {/* Big Photography with Badges */}
-        <div className="relative w-full h-64 rounded-3xl overflow-hidden shadow-md bg-[#F5F5F4]">
-          <img
-            src={recipe.imageUrl}
-            alt={recipe.title}
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/15 to-transparent" />
+        {/* Photography with Badges OR Clean Text-First Header */}
+        {recipe.imageUrl && !imageError ? (
+          <div className="relative w-full h-64 rounded-3xl overflow-hidden shadow-md bg-[#F5F5F4]">
+            <img
+              src={recipe.imageUrl}
+              alt={recipe.title}
+              referrerPolicy="no-referrer"
+              onError={() => setImageError(true)}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/15 to-transparent" />
 
-          <div className="absolute bottom-4 left-4 right-4 text-white">
-            <div className="flex items-center gap-2 mb-1.5">
+            <div className="absolute bottom-4 left-4 right-4 text-white">
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="px-2.5 py-1 rounded-full bg-[#E06D53] text-white text-xs font-extrabold shadow-sm">
+                  {recipe.ageLabel}
+                </span>
+                <span className="px-2.5 py-1 rounded-full bg-white/20 backdrop-blur-md text-white text-xs font-semibold">
+                  {recipe.categoryLabel}
+                </span>
+                {recipe.blwFriendly && (
+                  <span className="px-2 py-0.5 rounded-full bg-emerald-500/90 backdrop-blur-md text-white text-[11px] font-bold shadow-xs">
+                    BLW
+                  </span>
+                )}
+              </div>
+
+              <h1 className="text-xl font-bold font-display leading-tight drop-shadow-sm text-white">
+                {recipe.title}
+              </h1>
+            </div>
+          </div>
+        ) : (
+          <div className="w-full p-5 rounded-3xl bg-gradient-to-br from-white to-[#FDF5F1] border border-[#E7E5E4] shadow-xs">
+            <div className="flex items-center gap-2 mb-2.5">
               <span className="px-2.5 py-1 rounded-full bg-[#E06D53] text-white text-xs font-extrabold shadow-sm">
                 {recipe.ageLabel}
               </span>
-              <span className="px-2.5 py-1 rounded-full bg-white/20 backdrop-blur-md text-white text-xs font-semibold">
+              <span className="px-2.5 py-1 rounded-full bg-[#FAF7F2] border border-[#E7E5E4] text-[#57534E] text-xs font-semibold">
                 {recipe.categoryLabel}
               </span>
+              {recipe.blwFriendly && (
+                <span className="px-2 py-0.5 rounded-full bg-[#EAF2EB] text-[#2D5A3C] text-[11px] font-bold">
+                  BLW
+                </span>
+              )}
             </div>
-
-            <h1 className="text-xl font-bold font-display leading-tight drop-shadow-sm text-white">
+            <h1 className="text-2xl font-bold font-display leading-tight text-[#292524]">
               {recipe.title}
             </h1>
           </div>
-        </div>
+        )}
 
         {/* Quick Info Bar */}
         <div className="grid grid-cols-3 gap-2.5 bg-white p-3.5 rounded-2xl border border-[#E7E5E4] shadow-xs text-center">

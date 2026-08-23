@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 import { calculateBabyAge, formatDateSpanish } from '../utils/helpers';
 import { GrowthCurvesChart } from './GrowthCurvesChart';
@@ -18,7 +18,11 @@ import {
   ShieldCheck,
   Baby,
   Activity,
-  Award
+  Award,
+  Camera,
+  Upload,
+  Image as ImageIcon,
+  Check
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import confetti from 'canvas-confetti';
@@ -33,6 +37,9 @@ export const PerfilScreen: React.FC = () => {
     setShowOnboarding,
     foodsTracker
   } = useApp();
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [photoUploadSuccess, setPhotoUploadSuccess] = useState(false);
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditProfileModal, setShowEditProfileModal] = useState(false);
@@ -52,6 +59,62 @@ export const PerfilScreen: React.FC = () => {
   const [editBirthHeight, setEditBirthHeight] = useState(baby.birthHeight.toString());
 
   const age = calculateBabyAge(baby.birthDate);
+
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new window.Image();
+      img.onload = () => {
+        // Optimize & resize image with canvas to ~450x450 for crisp avatars and fast localStorage
+        const canvas = document.createElement('canvas');
+        const MAX_SIZE = 450;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_SIZE) {
+            height = Math.round((height * MAX_SIZE) / width);
+            width = MAX_SIZE;
+          }
+        } else {
+          if (height > MAX_SIZE) {
+            width = Math.round((width * MAX_SIZE) / height);
+            height = MAX_SIZE;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.88);
+          updateBaby({ avatar: dataUrl, photoUrl: dataUrl });
+          setPhotoUploadSuccess(true);
+          setTimeout(() => setPhotoUploadSuccess(false), 3500);
+
+          try {
+            confetti({
+              particleCount: 50,
+              spread: 60,
+              origin: { y: 0.6 }
+            });
+          } catch (err) {}
+        }
+      };
+      img.src = event.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+    // Reset file input so user can re-upload same file if desired
+    e.target.value = '';
+  };
+
+  const handleRemovePhoto = () => {
+    updateBaby({ avatar: undefined, photoUrl: undefined });
+  };
 
   // Sort growth records by date descending for display
   const sortedRecords = [...growthRecords].sort(
@@ -152,21 +215,94 @@ export const PerfilScreen: React.FC = () => {
         </button>
       </div>
 
+      {/* Hidden File Input for Baby Photo */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handlePhotoUpload}
+        accept="image/*"
+        className="hidden"
+      />
+
+      {/* Photo Upload Success Alert */}
+      <AnimatePresence>
+        {photoUploadSuccess && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="mb-4 p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-2.5 text-xs text-emerald-800 font-bold shadow-xs"
+          >
+            <div className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0">
+              <Check className="w-3.5 h-3.5" />
+            </div>
+            <span>¡Foto de {baby.name || 'tu bebé'} actualizada correctamente! 📸✨</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* 1. Header Baby Avatar Card */}
       <div className="bg-gradient-to-b from-[#FFFDF9] to-[#FCEEEA] rounded-3xl p-6 border border-[#F28B72]/30 shadow-sm text-center mb-5 relative overflow-hidden">
+        {/* Avatar Container with Upload Camera Overlay */}
         <div className="relative inline-block mb-3">
-          <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-[#F28B72] to-[#DE5D43] p-1 shadow-md mx-auto">
-            <div className="w-full h-full rounded-full bg-white flex items-center justify-center text-4xl overflow-hidden">
-              {baby.avatar ? (
-                <img src={baby.avatar} alt={baby.name} className="w-full h-full object-cover" />
+          <div
+            onClick={() => fileInputRef.current?.click()}
+            className="w-28 h-28 rounded-full bg-gradient-to-tr from-[#F28B72] to-[#DE5D43] p-1 shadow-md mx-auto cursor-pointer active-press group transition-transform hover:scale-105"
+            title="Toca para cambiar la foto de tu bebé"
+          >
+            <div className="w-full h-full rounded-full bg-white flex items-center justify-center text-5xl overflow-hidden relative">
+              {baby.avatar || baby.photoUrl ? (
+                <img
+                  src={baby.avatar || baby.photoUrl}
+                  alt={baby.name}
+                  className="w-full h-full object-cover"
+                />
               ) : (
                 <span>{baby.gender === 'girl' ? '👧' : '👶'}</span>
               )}
+
+              {/* Hover/Tap Overlay */}
+              <div className="absolute inset-0 bg-black/35 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white">
+                <Camera className="w-6 h-6 drop-shadow-sm" />
+                <span className="text-[10px] font-bold mt-0.5">Cambiar</span>
+              </div>
             </div>
           </div>
-          <span className="absolute bottom-1 right-1 w-6 h-6 rounded-full bg-[#4A7C59] border-2 border-white flex items-center justify-center text-white text-xs">
-            ✓
-          </span>
+
+          {/* Camera Button Badge */}
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="absolute bottom-1 right-1 w-8 h-8 rounded-full bg-[#E06D53] border-2 border-white flex items-center justify-center text-white shadow-md active-press hover:bg-[#DE5D43] transition-colors"
+            title="Subir foto del bebé"
+            aria-label="Subir foto"
+          >
+            <Camera className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* Photo Action Buttons */}
+        <div className="flex items-center justify-center gap-2 mb-3">
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-full bg-white border border-[#E7E5E4] text-[#DE5D43] text-xs font-bold shadow-2xs active-press hover:bg-stone-50 transition-colors"
+          >
+            <Camera className="w-3.5 h-3.5" />
+            <span>{baby.avatar || baby.photoUrl ? 'Cambiar foto' : 'Subir foto de mi bebé'}</span>
+          </button>
+
+          {(baby.avatar || baby.photoUrl) && (
+            <button
+              type="button"
+              onClick={handleRemovePhoto}
+              className="inline-flex items-center gap-1 py-1.5 px-2.5 rounded-full bg-[#FAF7F2] border border-[#E7E5E4] text-stone-500 text-xs font-semibold active-press hover:text-rose-600 transition-colors"
+              title="Quitar foto y usar emoji"
+            >
+              <Trash2 className="w-3 h-3" />
+              <span>Quitar</span>
+            </button>
+          )}
         </div>
 
         <h3 className="text-2xl font-extrabold text-[#292524] font-display flex items-center justify-center gap-2">
@@ -533,6 +669,51 @@ export const PerfilScreen: React.FC = () => {
               </div>
 
               <form onSubmit={handleSaveProfile} className="space-y-3.5">
+                {/* Photo in Modal */}
+                <div className="flex items-center gap-3 p-3 bg-[#FAF7F2] rounded-2xl border border-[#E7E5E4]">
+                  <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#F28B72] to-[#DE5D43] p-0.5 shrink-0 overflow-hidden">
+                    <div className="w-full h-full rounded-full bg-white flex items-center justify-center text-2xl overflow-hidden">
+                      {baby.avatar || baby.photoUrl ? (
+                        <img
+                          src={baby.avatar || baby.photoUrl}
+                          alt={baby.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span>{editGender === 'girl' ? '👧' : '👶'}</span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex-1">
+                    <p className="text-xs font-bold text-[#292524]">
+                      Foto de tu bebé
+                    </p>
+                    <p className="text-[11px] text-[#78716C] mb-1.5">
+                      Personaliza su carnet y avatar
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="py-1 px-2.5 rounded-lg bg-white border border-[#E7E5E4] text-[11px] font-bold text-[#DE5D43] flex items-center gap-1 active-press shadow-2xs"
+                      >
+                        <Camera className="w-3 h-3" />
+                        <span>{baby.avatar || baby.photoUrl ? 'Cambiar' : 'Subir foto'}</span>
+                      </button>
+                      {(baby.avatar || baby.photoUrl) && (
+                        <button
+                          type="button"
+                          onClick={handleRemovePhoto}
+                          className="py-1 px-2 rounded-lg text-[11px] text-stone-500 hover:text-rose-600 active-press"
+                        >
+                          Quitar
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
                 <div>
                   <label className="block text-xs font-semibold text-[#57534E] mb-1">
                     Nombre del bebé

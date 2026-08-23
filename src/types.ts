@@ -6,6 +6,7 @@ export interface BabyProfile {
   birthHeight: number; // in cm e.g. 50
   gender?: 'boy' | 'girl' | 'unspecified';
   avatar?: string;
+  photoUrl?: string;
   allergies?: string[];
   hasCompletedOnboarding: boolean;
 }

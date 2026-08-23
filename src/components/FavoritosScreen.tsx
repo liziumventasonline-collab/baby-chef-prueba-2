@@ -1,7 +1,89 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
+import { Recipe } from '../types';
 import { Heart, Clock, ArrowLeft, ChefHat, ArrowRight } from 'lucide-react';
 import { motion } from 'motion/react';
+
+interface FavoriteRecipeItemProps {
+  recipe: Recipe;
+  onSelect: (id: string) => void;
+  onToggleFavorite: (id: string) => void;
+}
+
+const FavoriteRecipeItem: React.FC<FavoriteRecipeItemProps> = ({
+  recipe,
+  onSelect,
+  onToggleFavorite
+}) => {
+  const [imgError, setImgError] = useState(false);
+
+  return (
+    <motion.div
+      key={recipe.id}
+      layout
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      onClick={() => onSelect(recipe.id)}
+      className="flex items-center gap-3.5 p-3.5 rounded-3xl bg-white border border-[#E7E5E4] shadow-xs active-press cursor-pointer hover:border-[#E06D53]/40 transition-all"
+    >
+      {/* Photo (Only rendered if present and loaded successfully) */}
+      {recipe.imageUrl && !imgError && (
+        <div className="relative w-20 h-20 rounded-2xl overflow-hidden shrink-0 bg-[#F5F5F4]">
+          <img
+            src={recipe.imageUrl}
+            alt={recipe.title}
+            referrerPolicy="no-referrer"
+            onError={() => setImgError(true)}
+            className="w-full h-full object-cover"
+            loading="lazy"
+          />
+          <span className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded-md bg-black/65 text-white text-[9px] font-bold">
+            {recipe.ageLabel}
+          </span>
+        </div>
+      )}
+
+      {/* Info */}
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-1.5">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-[#4A7C59]">
+            {recipe.categoryLabel}
+          </span>
+          {(!recipe.imageUrl || imgError) && (
+            <span className="px-1.5 py-0.5 rounded-md bg-[#E06D53] text-white text-[9px] font-bold">
+              {recipe.ageLabel}
+            </span>
+          )}
+        </div>
+        <h4 className="text-sm font-bold text-[#292524] truncate mt-0.5">
+          {recipe.title}
+        </h4>
+        <div className="flex items-center gap-2.5 mt-1 text-xs text-[#78716C]">
+          <span className="flex items-center gap-1">
+            <Clock className="w-3.5 h-3.5 text-[#A8A29E]" />
+            {recipe.prepTimeMinutes} min
+          </span>
+          <span className="text-[11px] px-2 py-0.5 rounded-full bg-[#FAF7F2]">
+            {recipe.texture.split(' ')[0]}
+          </span>
+        </div>
+      </div>
+
+      {/* Heart Unfavorite */}
+      <button
+        type="button"
+        onClick={e => {
+          e.stopPropagation();
+          onToggleFavorite(recipe.id);
+        }}
+        className="p-2 text-[#DE5D43] hover:text-[#78716C] rounded-full active-press"
+        aria-label="Quitar de favoritos"
+      >
+        <Heart className="w-5 h-5 fill-[#DE5D43]" />
+      </button>
+    </motion.div>
+  );
+};
 
 export const FavoritosScreen: React.FC = () => {
   const {
@@ -64,59 +146,12 @@ export const FavoritosScreen: React.FC = () => {
       ) : (
         <div className="space-y-3">
           {favoriteRecipes.map(recipe => (
-            <motion.div
+            <FavoriteRecipeItem
               key={recipe.id}
-              layout
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              onClick={() => setSelectedRecipeId(recipe.id)}
-              className="flex items-center gap-3.5 p-3.5 rounded-3xl bg-white border border-[#E7E5E4] shadow-xs active-press cursor-pointer hover:border-[#E06D53]/40 transition-all"
-            >
-              {/* Photo */}
-              <div className="relative w-22 h-22 rounded-2xl overflow-hidden shrink-0 bg-[#F5F5F4]">
-                <img
-                  src={recipe.imageUrl}
-                  alt={recipe.title}
-                  className="w-full h-full object-cover"
-                  loading="lazy"
-                />
-                <span className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded-md bg-black/65 text-white text-[9px] font-bold">
-                  {recipe.ageLabel}
-                </span>
-              </div>
-
-              {/* Info */}
-              <div className="flex-1 min-w-0">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#4A7C59]">
-                  {recipe.categoryLabel}
-                </span>
-                <h4 className="text-sm font-bold text-[#292524] truncate mt-0.5">
-                  {recipe.title}
-                </h4>
-                <div className="flex items-center gap-2.5 mt-1 text-xs text-[#78716C]">
-                  <span className="flex items-center gap-1">
-                    <Clock className="w-3.5 h-3.5 text-[#A8A29E]" />
-                    {recipe.prepTimeMinutes} min
-                  </span>
-                  <span className="text-[11px] px-2 py-0.5 rounded-full bg-[#FAF7F2]">
-                    {recipe.texture.split(' ')[0]}
-                  </span>
-                </div>
-              </div>
-
-              {/* Heart Unfavorite */}
-              <button
-                type="button"
-                onClick={e => {
-                  e.stopPropagation();
-                  toggleFavorite(recipe.id);
-                }}
-                className="p-2 text-[#DE5D43] hover:text-[#78716C] rounded-full active-press"
-                aria-label="Quitar de favoritos"
-              >
-                <Heart className="w-5 h-5 fill-[#DE5D43]" />
-              </button>
-            </motion.div>
+              recipe={recipe}
+              onSelect={setSelectedRecipeId}
+              onToggleFavorite={toggleFavorite}
+            />
           ))}
         </div>
       )}
