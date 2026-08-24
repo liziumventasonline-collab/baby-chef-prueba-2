@@ -72,7 +72,7 @@ export const AlimentacionScreen: React.FC = () => {
   };
 
   return (
-    <div id="alimentacion-screen" className="flex-1 overflow-y-auto px-4 pt-3 pb-24 no-scrollbar bg-stone-50">
+    <div id="alimentacion-screen" className="flex-1 overflow-y-auto px-4 pt-3 pb-36 no-scrollbar bg-stone-50">
       {/* Title & Baby Context */}
       <div className="mb-3">
         <h2 className="text-2xl font-black text-stone-900 tracking-tight font-display">
@@ -81,6 +81,32 @@ export const AlimentacionScreen: React.FC = () => {
         <p className="text-xs text-stone-500 font-medium">
           Guía nutricional paso a paso según la edad de desarrollo
         </p>
+
+        {/* Alérgenos Quick Access Banner */}
+        <div
+          onClick={() => setExtendedView('todo_alergenos')}
+          className="mt-3 p-3 rounded-2xl bg-gradient-to-r from-teal-700 via-emerald-700 to-teal-800 text-white shadow-2xs active-press cursor-pointer flex items-center justify-between"
+        >
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center text-base shrink-0">
+              🛡️
+            </div>
+            <div>
+              <span className="text-[9px] font-black uppercase px-1.5 py-0.2 rounded bg-black/20 text-white">
+                Guía Pediátrica
+              </span>
+              <h3 className="text-xs font-black text-white leading-tight mt-0.5">
+                Todo sobre Alérgenos en Bebés (6–24m)
+              </h3>
+              <p className="text-[10px] text-teal-100 font-medium">
+                Tabla por edad, regla de 3 días & protocolo de urgencias
+              </p>
+            </div>
+          </div>
+          <span className="py-1 px-2.5 rounded-xl bg-white text-teal-950 text-xs font-black shrink-0">
+            Ver →
+          </span>
+        </div>
       </div>
 
       {/* 1. Horizontal Scrollable Month Selector */}

@@ -98,7 +98,7 @@ export const FavoritosScreen: React.FC = () => {
   const favoriteRecipes = recipes.filter(r => favoriteIds.includes(r.id));
 
   return (
-    <div id="favoritos-screen" className="flex-1 overflow-y-auto px-4 pt-3 pb-24 no-scrollbar">
+    <div id="favoritos-screen" className="flex-1 overflow-y-auto px-4 pt-3 pb-36 no-scrollbar">
       {/* Top bar */}
       <div className="flex items-center gap-2 mb-4">
         <button

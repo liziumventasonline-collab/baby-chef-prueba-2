@@ -1,7 +1,7 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
 import { TabType } from '../types';
-import { Home, UtensilsCrossed, ChefHat, Users, MoreHorizontal } from 'lucide-react';
+import { Home, UtensilsCrossed, ChefHat, Sparkles, Users, MoreHorizontal } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export const BottomNav: React.FC = () => {
@@ -11,6 +11,7 @@ export const BottomNav: React.FC = () => {
     { id: 'inicio', label: 'Inicio', icon: Home },
     { id: 'alimentacion', label: 'Alimentación', icon: UtensilsCrossed },
     { id: 'recetas', label: 'Recetas', icon: ChefHat },
+    { id: 'bonus', label: 'Bonus', icon: Sparkles },
     { id: 'orientaciones', label: 'Orientación', icon: Users },
     { id: 'mas', label: 'Más', icon: MoreHorizontal }
   ];

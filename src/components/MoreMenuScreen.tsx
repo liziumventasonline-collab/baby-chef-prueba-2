@@ -10,6 +10,7 @@ import {
   Download,
   Settings,
   ShieldCheck,
+  Shield,
   RotateCcw,
   Sparkles,
   Info,
@@ -39,12 +40,39 @@ export const MoreMenuScreen: React.FC = () => {
 
   const menuSections = [
     {
-      title: 'Planes y Calendarios',
+      title: 'Guía Médica & Planes',
       items: [
         {
+          id: 'guia_medica',
+          label: 'Guía del Médico Pediatra (Antes de Empezar)',
+          desc: 'Manual completo por el Dr. Roberto Hernández',
+          icon: BookOpen,
+          color: 'text-rose-700',
+          bgColor: 'bg-rose-50',
+          action: () => setExtendedView('guia_medica')
+        },
+        {
+          id: 'todo_alergenos',
+          label: 'Todo sobre Alérgenos (6 a 24 Meses)',
+          desc: 'Plan nutricional, tabla por edad y protocolo de seguridad',
+          icon: Shield,
+          color: 'text-teal-700',
+          bgColor: 'bg-teal-50',
+          action: () => setExtendedView('todo_alergenos')
+        },
+        {
+          id: 'bonus_recetas',
+          label: 'Bonus de Recetas (12 a 24 Meses)',
+          desc: '70 recetas nutritivas: 30 de 12-18m + 40 de 18-24m',
+          icon: Sparkles,
+          color: 'text-amber-700',
+          bgColor: 'bg-amber-50',
+          action: () => setExtendedView('bonus_recetas')
+        },
+        {
           id: 'calendario_semanal',
-          label: 'Calendario Semanal de Menús',
-          desc: 'Planes día a día de 6 a 24 meses',
+          label: 'Planner Semanal (24 Semanas)',
+          desc: 'Tablas completas & compras de 6 a 24 meses',
           icon: Calendar,
           color: 'text-emerald-700',
           bgColor: 'bg-emerald-50',
@@ -173,7 +201,7 @@ export const MoreMenuScreen: React.FC = () => {
   ];
 
   return (
-    <div id="more-menu-screen" className="flex-1 overflow-y-auto px-4 pt-3 pb-24 no-scrollbar bg-stone-50">
+    <div id="more-menu-screen" className="flex-1 overflow-y-auto px-4 pt-3 pb-36 no-scrollbar bg-stone-50">
       {/* Header */}
       <div className="mb-4">
         <h2 className="text-2xl font-black text-stone-900 tracking-tight font-display">

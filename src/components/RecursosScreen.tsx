@@ -75,7 +75,7 @@ export const RecursosScreen: React.FC = () => {
   };
 
   return (
-    <div id="recursos-screen" className="flex-1 overflow-y-auto px-4 pt-3 pb-28 no-scrollbar bg-stone-50">
+    <div id="recursos-screen" className="flex-1 overflow-y-auto px-4 pt-3 pb-36 no-scrollbar bg-stone-50">
       {/* Top Bar */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">

@@ -356,6 +356,11 @@ export const OnboardingWizard: React.FC = () => {
                   <span className="font-semibold text-[#292524]">{birthHeight} cm</span>
                 </div>
               </div>
+
+              <div className="w-full p-3 rounded-2xl bg-rose-50 border border-rose-200/80 text-[11px] text-rose-950 font-medium flex items-center gap-2">
+                <span className="text-base">🩺</span>
+                <span>Al entrar tendrás la <strong>Guía Médica del Dr. Roberto Hernández</strong> con las 5 señales para antes de empezar.</span>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

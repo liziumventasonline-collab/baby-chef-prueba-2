@@ -177,7 +177,8 @@ export const RecetasScreen: React.FC = () => {
     setSelectedRecipeId,
     toggleFavorite,
     isFavorite,
-    selectedStageMonth
+    selectedStageMonth,
+    setExtendedView
   } = useApp();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -225,15 +226,45 @@ export const RecetasScreen: React.FC = () => {
   }, [recipes, searchQuery, selectedAge, selectedCategory]);
 
   return (
-    <div id="recetas-screen" className="flex-1 overflow-y-auto px-4 pt-3 pb-24 no-scrollbar">
+    <div id="recetas-screen" className="flex-1 overflow-y-auto px-4 pt-3 pb-36 no-scrollbar">
       {/* Title & Search bar */}
       <div className="mb-3">
-        <h2 className="text-2xl font-bold text-[#292524] tracking-tight font-display">
-          Recetas
-        </h2>
-        <p className="text-xs text-[#78716C] mb-3">
-          Preparaciones seguras, sin sal ni azúcar añadido
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-[#292524] tracking-tight font-display">
+              Recetas
+            </h2>
+            <p className="text-xs text-[#78716C] mb-2">
+              Preparaciones seguras, sin sal ni azúcar añadido
+            </p>
+          </div>
+        </div>
+
+        {/* Bonus Recetas Banner */}
+        <div
+          onClick={() => setExtendedView('bonus_recetas')}
+          className="mb-3 p-3.5 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white shadow-xs active-press cursor-pointer flex items-center justify-between"
+        >
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-lg shrink-0">
+              🎁
+            </div>
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-black/20 text-white">
+                Pestaña Bonus
+              </span>
+              <h3 className="text-xs font-black leading-tight text-white mt-0.5">
+                70 Recetas Nutritivas (12 a 24 Meses)
+              </h3>
+              <p className="text-[10px] text-amber-100 font-medium">
+                30 recetas (12-18m) + 40 recetas (18-24m)
+              </p>
+            </div>
+          </div>
+          <span className="py-1 px-2.5 rounded-xl bg-white text-stone-900 text-xs font-black shadow-2xs shrink-0">
+            Ver →
+          </span>
+        </div>
 
         {/* Search input */}
         <div className="relative flex items-center">

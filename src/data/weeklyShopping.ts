@@ -8,7 +8,9 @@ export const WEEKLY_SHOPPING_TEMPLATES: WeeklyShoppingList[] = [
     items: [
       { name: 'Calabaza / Zapallo / Auyama fresca', amount: '1 trozo mediano (400g)', category: 'Frutas y Verduras' },
       { name: 'Zanahorias de manojo frescas', amount: '3 unidades medianas', category: 'Frutas y Verduras' },
-      { name: 'Aceite de oliva virgen extra de calidad', amount: '1 botella (500ml)', category: 'Lácteos y Grasas' }
+      { name: 'Aceite de oliva virgen extra de calidad', amount: '1 botella (500ml)', category: 'Lácteos y Grasas' },
+      { name: 'Pechuga de pollo de corral', amount: '200g', category: 'Proteínas' },
+      { name: 'Plátano y papaya madura', amount: '4 unidades', category: 'Frutas y Verduras' }
     ]
   },
   {
@@ -17,7 +19,9 @@ export const WEEKLY_SHOPPING_TEMPLATES: WeeklyShoppingList[] = [
     items: [
       { name: 'Camote / Boniato / Batata', amount: '2 unidades medianas', category: 'Frutas y Verduras' },
       { name: 'Peras maduras (Williams o Conferencia)', amount: '3 unidades', category: 'Frutas y Verduras' },
-      { name: 'Aceite de oliva virgen extra', amount: 'Despensa', category: 'Lácteos y Grasas' }
+      { name: 'Aceite de oliva virgen extra', amount: 'Despensa', category: 'Lácteos y Grasas' },
+      { name: 'Filetes de pescado blanco sin espinas', amount: '200g', category: 'Proteínas' },
+      { name: 'Avena fortificada', amount: '1 paquete', category: 'Cereales' }
     ]
   },
   {
@@ -136,6 +140,19 @@ export const WEEKLY_SHOPPING_TEMPLATES: WeeklyShoppingList[] = [
     ]
   },
 
+  // --- MES 9 ---
+  {
+    month: 9,
+    week: 1,
+    items: [
+      { name: 'Yogur natural entero pasteurizado sin azúcar', amount: '500g', category: 'Lácteos y Grasas' },
+      { name: 'Avena fortificada en hojuelas', amount: '500g', category: 'Cereales' },
+      { name: 'Pechuga de pollo fresca y merluza', amount: '400g', category: 'Proteínas' },
+      { name: 'Plátanos, peras y papayas', amount: '1kg', category: 'Frutas y Verduras' },
+      { name: 'Lentejas y arroz integral', amount: 'Despensa', category: 'Cereales' }
+    ]
+  },
+
   // --- MES 10 ---
   {
     month: 10,
@@ -150,6 +167,19 @@ export const WEEKLY_SHOPPING_TEMPLATES: WeeklyShoppingList[] = [
     ]
   },
 
+  // --- MES 11 ---
+  {
+    month: 11,
+    week: 1,
+    items: [
+      { name: 'Pasta pequeña (estrellitas o letras)', amount: '500g', category: 'Cereales' },
+      { name: 'Pescado blanco y carne magra', amount: '500g', category: 'Proteínas' },
+      { name: 'Yuca, papas y camote', amount: '1kg', category: 'Frutas y Verduras' },
+      { name: 'Espinacas frescas y zanahorias', amount: '300g', category: 'Frutas y Verduras' },
+      { name: 'Frutas variadas (plátano, pera, melón, sandía)', amount: '1.5kg', category: 'Frutas y Verduras' }
+    ]
+  },
+
   // --- MES 12 (1 AÑO) ---
   {
     month: 12,
@@ -161,6 +191,109 @@ export const WEEKLY_SHOPPING_TEMPLATES: WeeklyShoppingList[] = [
       { name: 'Tortillas de maíz suaves de calidad', amount: '1 paquete', category: 'Cereales' },
       { name: 'Avena suave y plátanos maduros con motitas', amount: 'Para galletitas caseras', category: 'Cereales' },
       { name: 'Pescado fresco, pollo de corral y carne magra', amount: '600g variado', category: 'Proteínas' }
+    ]
+  },
+
+  // --- MES 13 ---
+  {
+    month: 13,
+    week: 1,
+    items: [
+      { name: 'Yogur natural entero y queso blanco pasteurizado', amount: '500g', category: 'Lácteos y Grasas' },
+      { name: 'Carne magra molida y pechuga de pollo', amount: '500g', category: 'Proteínas' },
+      { name: 'Pasta corta y arroz integral', amount: '1kg', category: 'Cereales' },
+      { name: 'Calabacines, tomates y papas', amount: '1kg', category: 'Frutas y Verduras' },
+      { name: 'Plátanos, fresas y mangos', amount: '1kg', category: 'Frutas y Verduras' }
+    ]
+  },
+
+  // --- MES 14 ---
+  {
+    month: 14,
+    week: 1,
+    items: [
+      { name: 'Pescado blanco (merluza) y ternera magra', amount: '500g', category: 'Proteínas' },
+      { name: 'Queso fresco pasteurizado y yogur natural', amount: '400g', category: 'Lácteos y Grasas' },
+      { name: 'Camote, brócoli y ejotes', amount: '1kg', category: 'Frutas y Verduras' },
+      { name: 'Avena en hojuelas y pan integral', amount: '500g', category: 'Cereales' },
+      { name: 'Frutas frescas de temporada', amount: '1.5kg', category: 'Frutas y Verduras' }
+    ]
+  },
+
+  // --- MES 15 ---
+  {
+    month: 15,
+    week: 1,
+    items: [
+      { name: 'Salmón o pescado blanco fresco', amount: '300g', category: 'Proteínas' },
+      { name: 'Carne de res para guisar y pollo', amount: '500g', category: 'Proteínas' },
+      { name: 'Garbanzos y lentejas secas', amount: '500g', category: 'Proteínas' },
+      { name: 'Yogur natural entero y queso pasteurizado', amount: '500g', category: 'Lácteos y Grasas' },
+      { name: 'Verduras variadas (calabaza, espinacas, papas)', amount: '1.5kg', category: 'Frutas y Verduras' }
+    ]
+  },
+
+  // --- MES 16 ---
+  {
+    month: 16,
+    week: 1,
+    items: [
+      { name: 'Carne magra molida y pechuga de pollo', amount: '500g', category: 'Proteínas' },
+      { name: 'Pescado blanco y huevos frescos', amount: '300g + 6 huevos', category: 'Proteínas' },
+      { name: 'Pastas cortas integrales y arroz', amount: '1kg', category: 'Cereales' },
+      { name: 'Verduras frescas para asar y cremas', amount: '1.5kg', category: 'Frutas y Verduras' },
+      { name: 'Yogur natural y fruta fresca', amount: '1kg', category: 'Frutas y Verduras' }
+    ]
+  },
+
+  // --- MES 17 ---
+  {
+    month: 17,
+    week: 1,
+    items: [
+      { name: 'Salmón fresco y carne de ternera', amount: '500g', category: 'Proteínas' },
+      { name: 'Lentejas, garbanzos y frijoles', amount: '500g', category: 'Proteínas' },
+      { name: 'Camotes, papas y calabaza', amount: '1.5kg', category: 'Frutas y Verduras' },
+      { name: 'Pan integral y avena', amount: '500g', category: 'Cereales' },
+      { name: 'Fruta fresca de temporada', amount: '1.5kg', category: 'Frutas y Verduras' }
+    ]
+  },
+
+  // --- MES 18 ---
+  {
+    month: 18,
+    week: 1,
+    items: [
+      { name: 'Semillas de chía de calidad', amount: '1 bolsa (250g)', category: 'Cereales' },
+      { name: 'Leche entera pasteurizada y yogur natural', amount: '1L + 500g', category: 'Lácteos y Grasas' },
+      { name: 'Mangos maduros, fresas y arándanos', amount: '1kg', category: 'Frutas y Verduras' },
+      { name: 'Salmón fresco o merluza', amount: '300g', category: 'Proteínas' },
+      { name: 'Carne magra y pechuga de pollo', amount: '500g', category: 'Proteínas' }
+    ]
+  },
+
+  // --- MES 19 A 24 ---
+  {
+    month: 19,
+    week: 1,
+    items: [
+      { name: 'Semillas de chía y avena integral', amount: '500g', category: 'Cereales' },
+      { name: 'Carne magra, pescado y pollo', amount: '700g', category: 'Proteínas' },
+      { name: 'Garbanzos y lentejas', amount: '500g', category: 'Proteínas' },
+      { name: 'Verduras variadas de temporada', amount: '2kg', category: 'Frutas y Verduras' },
+      { name: 'Frutas frescas y yogur natural', amount: '1.5kg', category: 'Frutas y Verduras' }
+    ]
+  },
+  {
+    month: 24,
+    week: 1,
+    items: [
+      { name: 'Pescados variados (salmón y merluza)', amount: '400g', category: 'Proteínas' },
+      { name: 'Carne magra y pechuga de pollo', amount: '600g', category: 'Proteínas' },
+      { name: 'Huevos camperos y legumbres', amount: '1 docena + 500g', category: 'Proteínas' },
+      { name: 'Pastas integrales, arroz y avena', amount: '1.5kg', category: 'Cereales' },
+      { name: 'Verduras y frutas variadas familiares', amount: '3kg', category: 'Frutas y Verduras' },
+      { name: 'Yogur natural entero y queso fresco', amount: '1kg', category: 'Lácteos y Grasas' }
     ]
   }
 ];

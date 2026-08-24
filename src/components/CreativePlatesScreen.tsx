@@ -14,7 +14,7 @@ export const CreativePlatesScreen: React.FC<CreativePlatesScreenProps> = ({ onBa
   const creativeRecipes = RECIPES_DATA.filter((r) => r.category === 'creativos');
 
   return (
-    <div className="flex flex-col min-h-full bg-stone-50 pb-24">
+    <div className="flex-1 overflow-y-auto bg-stone-50 pb-36 no-scrollbar">
       {/* Header */}
       <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-stone-100 px-4 py-3 shadow-2xs">
         <div className="flex items-center gap-3">

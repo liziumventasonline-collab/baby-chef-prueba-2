@@ -15,9 +15,14 @@ import { RecursosScreen } from './RecursosScreen';
 import { WeeklyMenuScreen } from './WeeklyMenuScreen';
 import { CreativePlatesScreen } from './CreativePlatesScreen';
 import { OrientacionesScreen } from './OrientacionesScreen';
+import { MedicalGuideScreen } from './MedicalGuideScreen';
+import { BonusRecipesScreen } from './BonusRecipesScreen';
+import { AllergensGuideScreen } from './AllergensGuideScreen';
+import { BonusScreen } from './BonusScreen';
 import { OnboardingWizard } from './OnboardingWizard';
 import { SplashScreen } from './SplashScreen';
 import { InstallModal } from './InstallModal';
+import { InstallGateScreen } from './InstallGateScreen';
 import { Smartphone, Monitor } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 
@@ -28,7 +33,8 @@ export const NativeAppShell: React.FC = () => {
     setExtendedView,
     selectedRecipeId,
     showSplash,
-    showOnboarding
+    showOnboarding,
+    hasCompletedInstallGate
   } = useApp();
 
   // Render current active view
@@ -63,6 +69,18 @@ export const NativeAppShell: React.FC = () => {
     if (extendedView === 'orientaciones') {
       return <OrientacionesScreen onBack={() => setExtendedView('none')} />;
     }
+    if (extendedView === 'guia_medica') {
+      return <MedicalGuideScreen onBack={() => setExtendedView('none')} />;
+    }
+    if (extendedView === 'bonus') {
+      return <BonusScreen onBack={() => setExtendedView('none')} />;
+    }
+    if (extendedView === 'bonus_recetas') {
+      return <BonusRecipesScreen onBack={() => setExtendedView('none')} />;
+    }
+    if (extendedView === 'todo_alergenos') {
+      return <AllergensGuideScreen onBack={() => setExtendedView('none')} />;
+    }
 
     // Main tabs
     switch (activeTab) {
@@ -72,6 +90,12 @@ export const NativeAppShell: React.FC = () => {
         return <AlimentacionScreen />;
       case 'recetas':
         return <RecetasScreen />;
+      case 'bonus':
+        return <BonusScreen />;
+      case 'bonus_recetas':
+        return <BonusRecipesScreen />;
+      case 'todo_alergenos':
+        return <AllergensGuideScreen />;
       case 'orientaciones':
         return <OrientacionesScreen />;
       case 'perfil':
@@ -104,13 +128,18 @@ export const NativeAppShell: React.FC = () => {
           {showSplash && <SplashScreen />}
         </AnimatePresence>
 
+        {/* First-Time Mandatory Install Gate Overlay */}
+        <AnimatePresence>
+          {!showSplash && !hasCompletedInstallGate && <InstallGateScreen />}
+        </AnimatePresence>
+
         {/* Onboarding Wizard Overlay */}
         <AnimatePresence>
-          {!showSplash && showOnboarding && <OnboardingWizard />}
+          {!showSplash && hasCompletedInstallGate && showOnboarding && <OnboardingWizard />}
         </AnimatePresence>
 
         {/* Top Header App Bar (Hidden on full recipe detail for native immersion) */}
-        {!selectedRecipeId && !showOnboarding && !showSplash && <TopHeader />}
+        {!selectedRecipeId && !showOnboarding && !showSplash && hasCompletedInstallGate && <TopHeader />}
 
         {/* Active Screen Content with Cross-Fade */}
         <main className="flex-1 flex flex-col overflow-hidden relative">
@@ -123,13 +152,13 @@ export const NativeAppShell: React.FC = () => {
               transition={{ duration: 0.15 }}
               className="flex-1 flex flex-col overflow-hidden"
             >
-              {renderCurrentView()}
+              {hasCompletedInstallGate ? renderCurrentView() : null}
             </motion.div>
           </AnimatePresence>
         </main>
 
         {/* Fixed Bottom Navigation Bar (Hidden when inside full recipe detail or modal views) */}
-        {!selectedRecipeId && !showOnboarding && !showSplash && <BottomNav />}
+        {!selectedRecipeId && !showOnboarding && !showSplash && hasCompletedInstallGate && <BottomNav />}
 
         {/* PWA Install Sheet Modal */}
         <InstallModal />

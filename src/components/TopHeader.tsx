@@ -99,7 +99,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({ title, onOpenShopping }) =
         {!isPWAInstalled && (
           <button
             id="top-install-app-btn"
-            onClick={installAppPrompt}
+            onClick={() => setShowInstallModal(true)}
             className="flex items-center gap-1 py-1.5 px-2.5 rounded-full bg-[#E06D53] text-white text-xs font-bold active-press shadow-sm hover:bg-[#DE5D43] transition-colors"
           >
             <Download className="w-3.5 h-3.5" />
