@@ -7,20 +7,20 @@ import {
   Search,
   Check,
   Copy,
-  Share2,
   Clock,
   Utensils,
   Heart,
-  Info,
   Calendar,
-  Layers,
   ChefHat,
   Apple,
   ShieldCheck,
   ShoppingCart,
   CheckCircle2,
+  X,
+  ListOrdered,
+  AlertCircle,
   Flame,
-  X
+  ArrowRight
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import {
@@ -34,7 +34,7 @@ interface BonusRecipesScreenProps {
   onBack?: () => void;
 }
 
-type BonusTab = '12-18m' | '18-24m' | 'consejos_porciones';
+type BonusTab = '12-18m' | '18-24m' | 'indice' | 'consejos_porciones';
 type RecipeFilter = 'todos' | 'desayunos' | 'almuerzos_cenas' | 'snacks_meriendas';
 
 export const BonusRecipesScreen: React.FC<BonusRecipesScreenProps> = ({ onBack }) => {
@@ -47,12 +47,15 @@ export const BonusRecipesScreen: React.FC<BonusRecipesScreenProps> = ({ onBack }
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [checkedIngredients, setCheckedIngredients] = useState<{ [key: string]: boolean }>({});
 
-  const currentBookInfo = useMemo(() => {
-    return BONUS_BOOKS.find((b) => b.id === (activeBookTab === 'consejos_porciones' ? '12-18m' : activeBookTab)) || BONUS_BOOKS[0];
+  const currentBookInfo: BonusBookInfo = useMemo(() => {
+    if (activeBookTab === '18-24m') {
+      return BONUS_BOOKS[1] || BONUS_BOOKS[0];
+    }
+    return BONUS_BOOKS[0];
   }, [activeBookTab]);
 
   const filteredRecipes = useMemo(() => {
-    if (activeBookTab === 'consejos_porciones') return [];
+    if (activeBookTab === 'indice' || activeBookTab === 'consejos_porciones') return [];
 
     return BONUS_RECIPES_DATABASE.filter((r) => {
       const matchesBook = r.book === activeBookTab;
@@ -68,6 +71,27 @@ export const BonusRecipesScreen: React.FC<BonusRecipesScreenProps> = ({ onBack }
     });
   }, [activeBookTab, selectedCategory, searchQuery]);
 
+  // Index data grouped by book
+  const indexData = useMemo(() => {
+    const book1Recipes = BONUS_RECIPES_DATABASE.filter((r) => r.book === '12-18m');
+    const book2Recipes = BONUS_RECIPES_DATABASE.filter((r) => r.book === '18-24m');
+
+    return {
+      book1: {
+        info: BONUS_BOOKS[0],
+        desayunos: book1Recipes.filter((r) => r.category === 'desayunos'),
+        almuerzos: book1Recipes.filter((r) => r.category === 'almuerzos_cenas'),
+        snacks: book1Recipes.filter((r) => r.category === 'snacks_meriendas')
+      },
+      book2: {
+        info: BONUS_BOOKS[1],
+        desayunos: book2Recipes.filter((r) => r.category === 'desayunos'),
+        almuerzos: book2Recipes.filter((r) => r.category === 'almuerzos_cenas'),
+        snacks: book2Recipes.filter((r) => r.category === 'snacks_meriendas')
+      }
+    };
+  }, []);
+
   const handleCopyRecipe = (recipe: BonusRecipe) => {
     const text = `📖 RECETA BONUS: ${recipe.title.toUpperCase()}\n` +
       `👶 Etapa: ${recipe.bookTitle} | ${recipe.categoryLabel}\n` +
@@ -76,7 +100,7 @@ export const BonusRecipesScreen: React.FC<BonusRecipesScreenProps> = ({ onBack }
       recipe.ingredients.map((i) => `• ${i}`).join('\n') +
       `\n\n👩‍🍳 PREPARACIÓN:\n` +
       recipe.steps.map((s, idx) => `${idx + 1}. ${s}`).join('\n') +
-      (recipe.tips && recipe.tips.length > 0 ? `\n\n💡 TIPS:\n${recipe.tips.join('\n')}` : '') +
+      (recipe.tips && recipe.tips.length > 0 ? `\n\n💡 CONSEJO PEDIÁTRICO:\n${recipe.tips.join('\n')}` : '') +
       `\n\n⭐ Sin sal, azúcar ni miel añadida.`;
 
     if (navigator.clipboard) {
@@ -127,7 +151,7 @@ export const BonusRecipesScreen: React.FC<BonusRecipesScreenProps> = ({ onBack }
               <div className="flex items-center gap-1.5">
                 <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 text-[10px] font-black uppercase tracking-wider flex items-center gap-1">
                   <Sparkles className="w-3 h-3 text-amber-600" />
-                  <span>Bonus Recetas Exclusivas</span>
+                  <span>Recetario Exclusivo</span>
                 </span>
               </div>
               <h1 className="text-sm font-extrabold text-stone-900 leading-tight">
@@ -145,60 +169,76 @@ export const BonusRecipesScreen: React.FC<BonusRecipesScreenProps> = ({ onBack }
           </button>
         </div>
 
-        {/* Main Books Switcher */}
-        <div className="grid grid-cols-3 gap-1.5 mt-2.5">
+        {/* Main Books & Modules Switcher */}
+        <div className="grid grid-cols-4 gap-1 mt-2.5">
           <button
+            id="tab-bonus-12-18m"
             onClick={() => {
               setActiveBookTab('12-18m');
               setSelectedCategory('todos');
             }}
-            className={`py-2 px-1 rounded-2xl text-xs font-black text-center transition-all flex flex-col items-center justify-center ${
+            className={`py-2 px-1 rounded-2xl text-[11px] font-black text-center transition-all flex flex-col items-center justify-center ${
               activeBookTab === '12-18m'
                 ? 'bg-amber-600 text-white shadow-xs'
                 : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
             }`}
           >
-            <span className="leading-tight">12–18 Meses</span>
-            <span className="text-[10px] opacity-80 font-bold">30 Recetas</span>
+            <span className="leading-tight">12–18m</span>
+            <span className="text-[9px] opacity-90 font-bold">30 Recetas</span>
           </button>
 
           <button
+            id="tab-bonus-18-24m"
             onClick={() => {
               setActiveBookTab('18-24m');
               setSelectedCategory('todos');
             }}
-            className={`py-2 px-1 rounded-2xl text-xs font-black text-center transition-all flex flex-col items-center justify-center ${
+            className={`py-2 px-1 rounded-2xl text-[11px] font-black text-center transition-all flex flex-col items-center justify-center ${
               activeBookTab === '18-24m'
                 ? 'bg-orange-600 text-white shadow-xs'
                 : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
             }`}
           >
-            <span className="leading-tight">18–24 Meses</span>
-            <span className="text-[10px] opacity-80 font-bold">40 Recetas</span>
+            <span className="leading-tight">18–24m</span>
+            <span className="text-[9px] opacity-90 font-bold">40 Recetas</span>
           </button>
 
           <button
-            onClick={() => setActiveBookTab('consejos_porciones')}
-            className={`py-2 px-1 rounded-2xl text-xs font-black text-center transition-all flex flex-col items-center justify-center ${
-              activeBookTab === 'consejos_porciones'
+            id="tab-bonus-indice"
+            onClick={() => setActiveBookTab('indice')}
+            className={`py-2 px-1 rounded-2xl text-[11px] font-black text-center transition-all flex flex-col items-center justify-center ${
+              activeBookTab === 'indice'
                 ? 'bg-stone-900 text-white shadow-xs'
                 : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
             }`}
           >
-            <span className="leading-tight">Guías & Tips</span>
-            <span className="text-[10px] opacity-80 font-bold">Porciones & Batch</span>
+            <span className="leading-tight">Índice</span>
+            <span className="text-[9px] opacity-90 font-bold">70 Platos</span>
+          </button>
+
+          <button
+            id="tab-bonus-consejos"
+            onClick={() => setActiveBookTab('consejos_porciones')}
+            className={`py-2 px-1 rounded-2xl text-[11px] font-black text-center transition-all flex flex-col items-center justify-center ${
+              activeBookTab === 'consejos_porciones'
+                ? 'bg-teal-700 text-white shadow-xs'
+                : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
+            }`}
+          >
+            <span className="leading-tight">Guías</span>
+            <span className="text-[9px] opacity-90 font-bold">Porciones</span>
           </button>
         </div>
 
         {/* Search and Category Filters (When in Recipe Mode) */}
-        {activeBookTab !== 'consejos_porciones' && (
+        {(activeBookTab === '12-18m' || activeBookTab === '18-24m') && (
           <div className="space-y-2 mt-2.5">
             {/* Search Input */}
             <div className="relative">
               <Search className="w-4 h-4 text-stone-400 absolute left-3 top-2.5" />
               <input
                 type="text"
-                placeholder="Buscar receta o ingrediente (ej. aguacate, avena)..."
+                placeholder="Buscar receta o ingrediente (ej. aguacate, avena, pollo)..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-9 pr-8 py-1.5 rounded-xl border border-stone-200 text-xs font-medium text-stone-900 bg-stone-50 focus:bg-white focus:outline-amber-500"
@@ -246,9 +286,9 @@ export const BonusRecipesScreen: React.FC<BonusRecipesScreenProps> = ({ onBack }
       {/* Main Content View */}
       <div className="p-3.5 space-y-4">
         {/* ========================================================================= */}
-        {/* VISTA RECETAS (12-18m ó 18-24m) */}
+        {/* VISTA 1 & 2: RECETARIO DIRECTO (12-18m ó 18-24m) */}
         {/* ========================================================================= */}
-        {activeBookTab !== 'consejos_porciones' && (
+        {(activeBookTab === '12-18m' || activeBookTab === '18-24m') && (
           <div className="space-y-3.5">
             {/* Header Description Banner */}
             <div
@@ -260,7 +300,7 @@ export const BonusRecipesScreen: React.FC<BonusRecipesScreenProps> = ({ onBack }
             >
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/20">
-                  {currentBookInfo.recipeCount} Recetas Seguras
+                  {currentBookInfo.recipeCount} Recetas Nutritivas
                 </span>
                 <span className="text-[10px] font-extrabold bg-black/20 px-2 py-0.5 rounded-full">
                   Sin Sal · Sin Azúcar · Sin Miel
@@ -270,17 +310,35 @@ export const BonusRecipesScreen: React.FC<BonusRecipesScreenProps> = ({ onBack }
                 {currentBookInfo.title}
               </h2>
               <p className="text-xs text-white/90 leading-relaxed font-normal">
-                {currentBookInfo.subtitle}
+                {currentBookInfo.intro}
               </p>
             </div>
 
-            {/* Results Count & Subtitle */}
+            {/* Pautas Importantes y de Seguridad Pediátrica */}
+            <div className="bg-white rounded-3xl border border-stone-200/90 p-4 shadow-2xs space-y-2.5">
+              <div className="flex items-center gap-2 border-b border-stone-100 pb-2">
+                <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                <h3 className="text-xs font-black text-stone-900 uppercase tracking-wider">
+                  Recomendaciones Importantes de Seguridad
+                </h3>
+              </div>
+              <ul className="space-y-1.5 text-xs text-stone-700">
+                {currentBookInfo.recommendations.map((rec, rIdx) => (
+                  <li key={rIdx} className="flex items-start gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1.5 shrink-0" />
+                    <span className="font-medium leading-relaxed">{rec}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Results Count & Action Tip */}
             <div className="flex items-center justify-between px-1">
               <span className="text-xs font-black text-stone-700">
                 Mostrando {filteredRecipes.length} recetas
               </span>
-              <span className="text-[11px] font-semibold text-stone-500">
-                Toca cualquier receta para ver detalles
+              <span className="text-[11px] font-semibold text-amber-800">
+                Toca cualquier tarjeta para ver el paso a paso
               </span>
             </div>
 
@@ -290,7 +348,7 @@ export const BonusRecipesScreen: React.FC<BonusRecipesScreenProps> = ({ onBack }
                 <p className="text-2xl">🔍</p>
                 <h4 className="text-xs font-black text-stone-900">No encontramos recetas con ese término</h4>
                 <p className="text-[11px] text-stone-500 font-medium">
-                  Prueba buscando otro ingrediente como "pollo", "avena" o "calabaza".
+                  Prueba buscando otro ingrediente como "pollo", "avena", "camote" o "calabacín".
                 </p>
               </div>
             ) : (
@@ -309,7 +367,7 @@ export const BonusRecipesScreen: React.FC<BonusRecipesScreenProps> = ({ onBack }
                         {/* Badges & Number */}
                         <div className="flex items-center justify-between gap-1.5">
                           <div className="flex items-center gap-1.5">
-                            <span className="w-5 h-5 rounded-full bg-stone-100 text-stone-800 text-[10px] font-black flex items-center justify-center">
+                            <span className="w-5 h-5 rounded-full bg-stone-900 text-white text-[10px] font-black flex items-center justify-center">
                               {recipe.number}
                             </span>
                             <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 uppercase">
@@ -395,22 +453,210 @@ export const BonusRecipesScreen: React.FC<BonusRecipesScreenProps> = ({ onBack }
         )}
 
         {/* ========================================================================= */}
-        {/* VISTA GUÍAS, PORCIONES & CONSEJOS PRÁCTICOS */}
+        {/* VISTA 3: ÍNDICE COMPLETO DE RECETAS (PDF PAGES 2 & 3-4) */}
         {/* ========================================================================= */}
-        {activeTabOrBookTabConsejos(activeBookTab) && (
+        {activeBookTab === 'indice' && (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             className="space-y-4"
           >
             {/* Header Banner */}
-            <div className="bg-gradient-to-r from-stone-900 to-stone-800 text-white p-5 rounded-3xl shadow-md space-y-1.5">
+            <div className="bg-stone-900 text-white p-4 rounded-3xl shadow-md space-y-1">
+              <div className="flex items-center gap-2">
+                <ListOrdered className="w-5 h-5 text-amber-400" />
+                <h2 className="text-base font-black font-display">Índice General de Recetas</h2>
+              </div>
+              <p className="text-xs text-stone-300 font-normal">
+                Toca cualquier título para abrir directamente la receta completa con ingredientes y pasos.
+              </p>
+            </div>
+
+            {/* 1. Recetario 12 a 18 Meses */}
+            <div className="bg-white rounded-3xl border border-stone-200 p-4 shadow-2xs space-y-3">
+              <div className="flex items-center justify-between border-b border-stone-100 pb-2">
+                <h3 className="text-xs font-black text-amber-900 uppercase tracking-wider flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
+                  <span>1. Recetario 12–18 Meses (30 Recetas)</span>
+                </h3>
+                <button
+                  onClick={() => {
+                    setActiveBookTab('12-18m');
+                    setSelectedCategory('todos');
+                  }}
+                  className="text-[10px] font-black text-amber-700 hover:underline flex items-center gap-0.5"
+                >
+                  <span>Ver todas</span>
+                  <ArrowRight className="w-3 h-3" />
+                </button>
+              </div>
+
+              {/* 3 Columns / Sections */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                {/* Desayunos */}
+                <div className="p-3 rounded-2xl bg-amber-50/50 border border-amber-100 space-y-2">
+                  <h4 className="text-xs font-black text-stone-900 flex items-center justify-between">
+                    <span>☀️ Desayunos</span>
+                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-200/70 text-amber-950">10 recetas</span>
+                  </h4>
+                  <ul className="space-y-1.5 text-xs">
+                    {indexData.book1.desayunos.map((r) => (
+                      <li
+                        key={r.id}
+                        onClick={() => setSelectedRecipe(r)}
+                        className="flex items-start gap-1.5 cursor-pointer hover:text-amber-800 font-medium leading-snug group"
+                      >
+                        <span className="text-stone-400 group-hover:text-amber-600 shrink-0 mt-0.5">•</span>
+                        <span className="group-hover:underline">{r.title}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Almuerzos & Cenas */}
+                <div className="p-3 rounded-2xl bg-orange-50/50 border border-orange-100 space-y-2">
+                  <h4 className="text-xs font-black text-stone-900 flex items-center justify-between">
+                    <span>🍲 Almuerzos y Cenas</span>
+                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-orange-200/70 text-orange-950">15 recetas</span>
+                  </h4>
+                  <ul className="space-y-1.5 text-xs">
+                    {indexData.book1.almuerzos.map((r) => (
+                      <li
+                        key={r.id}
+                        onClick={() => setSelectedRecipe(r)}
+                        className="flex items-start gap-1.5 cursor-pointer hover:text-orange-800 font-medium leading-snug group"
+                      >
+                        <span className="text-stone-400 group-hover:text-orange-600 shrink-0 mt-0.5">•</span>
+                        <span className="group-hover:underline">{r.title}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Snacks & Meriendas */}
+                <div className="p-3 rounded-2xl bg-rose-50/50 border border-rose-100 space-y-2">
+                  <h4 className="text-xs font-black text-stone-900 flex items-center justify-between">
+                    <span>🍓 Snacks y Meriendas</span>
+                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-rose-200/70 text-rose-950">5 recetas</span>
+                  </h4>
+                  <ul className="space-y-1.5 text-xs">
+                    {indexData.book1.snacks.map((r) => (
+                      <li
+                        key={r.id}
+                        onClick={() => setSelectedRecipe(r)}
+                        className="flex items-start gap-1.5 cursor-pointer hover:text-rose-800 font-medium leading-snug group"
+                      >
+                        <span className="text-stone-400 group-hover:text-rose-600 shrink-0 mt-0.5">•</span>
+                        <span className="group-hover:underline">{r.title}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* 2. Recetario 18 a 24 Meses */}
+            <div className="bg-white rounded-3xl border border-stone-200 p-4 shadow-2xs space-y-3">
+              <div className="flex items-center justify-between border-b border-stone-100 pb-2">
+                <h3 className="text-xs font-black text-orange-900 uppercase tracking-wider flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-orange-500" />
+                  <span>2. Recetario 18–24 Meses (40 Recetas)</span>
+                </h3>
+                <button
+                  onClick={() => {
+                    setActiveBookTab('18-24m');
+                    setSelectedCategory('todos');
+                  }}
+                  className="text-[10px] font-black text-orange-700 hover:underline flex items-center gap-0.5"
+                >
+                  <span>Ver todas</span>
+                  <ArrowRight className="w-3 h-3" />
+                </button>
+              </div>
+
+              {/* 3 Columns / Sections */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                {/* Desayunos */}
+                <div className="p-3 rounded-2xl bg-amber-50/50 border border-amber-100 space-y-2">
+                  <h4 className="text-xs font-black text-stone-900 flex items-center justify-between">
+                    <span>☀️ Desayunos</span>
+                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-200/70 text-amber-950">12 recetas</span>
+                  </h4>
+                  <ul className="space-y-1.5 text-xs">
+                    {indexData.book2.desayunos.map((r) => (
+                      <li
+                        key={r.id}
+                        onClick={() => setSelectedRecipe(r)}
+                        className="flex items-start gap-1.5 cursor-pointer hover:text-amber-800 font-medium leading-snug group"
+                      >
+                        <span className="text-stone-400 group-hover:text-amber-600 shrink-0 mt-0.5">•</span>
+                        <span className="group-hover:underline">{r.title}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Almuerzos & Cenas */}
+                <div className="p-3 rounded-2xl bg-orange-50/50 border border-orange-100 space-y-2">
+                  <h4 className="text-xs font-black text-stone-900 flex items-center justify-between">
+                    <span>🍲 Almuerzos y Cenas</span>
+                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-orange-200/70 text-orange-950">20 recetas</span>
+                  </h4>
+                  <ul className="space-y-1.5 text-xs">
+                    {indexData.book2.almuerzos.map((r) => (
+                      <li
+                        key={r.id}
+                        onClick={() => setSelectedRecipe(r)}
+                        className="flex items-start gap-1.5 cursor-pointer hover:text-orange-800 font-medium leading-snug group"
+                      >
+                        <span className="text-stone-400 group-hover:text-orange-600 shrink-0 mt-0.5">•</span>
+                        <span className="group-hover:underline">{r.title}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Snacks & Meriendas */}
+                <div className="p-3 rounded-2xl bg-rose-50/50 border border-rose-100 space-y-2">
+                  <h4 className="text-xs font-black text-stone-900 flex items-center justify-between">
+                    <span>🍓 Snacks y Meriendas</span>
+                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-rose-200/70 text-rose-950">8 recetas</span>
+                  </h4>
+                  <ul className="space-y-1.5 text-xs">
+                    {indexData.book2.snacks.map((r) => (
+                      <li
+                        key={r.id}
+                        onClick={() => setSelectedRecipe(r)}
+                        className="flex items-start gap-1.5 cursor-pointer hover:text-rose-800 font-medium leading-snug group"
+                      >
+                        <span className="text-stone-400 group-hover:text-rose-600 shrink-0 mt-0.5">•</span>
+                        <span className="group-hover:underline">{r.title}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* VISTA 4: GUÍAS, PORCIONES & CONSEJOS PRÁCTICOS (PDF PAGE 10 & 18) */}
+        {/* ========================================================================= */}
+        {activeBookTab === 'consejos_porciones' && (
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-4"
+          >
+            {/* Header Banner */}
+            <div className="bg-gradient-to-r from-teal-800 to-emerald-900 text-white p-5 rounded-3xl shadow-md space-y-1.5">
               <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/20">
                 Guía Pediátrica & Organización
               </span>
               <h2 className="text-lg font-black font-display">Consejos Prácticos & Porciones</h2>
-              <p className="text-xs text-stone-300 font-normal leading-relaxed">
-                Todo lo que necesitas para organizar las comidas semanales, batch cooking y sustituciones seguras.
+              <p className="text-xs text-teal-100 font-normal leading-relaxed">
+                Todo lo que necesitas para organizar las comidas semanales, batch cooking, porciones y sustituciones seguras.
               </p>
             </div>
 
@@ -498,7 +744,40 @@ export const BonusRecipesScreen: React.FC<BonusRecipesScreenProps> = ({ onBack }
               </div>
             </div>
 
-            {/* 4. Lista de Compras Básica de los Recetarios */}
+            {/* 4. Consejos Finales y Conservación Inteligente (PDF Page 18) */}
+            <div className="bg-white rounded-3xl border border-stone-200 p-4 shadow-2xs space-y-3">
+              <div className="flex items-center gap-2 border-b border-stone-100 pb-2">
+                <Sparkles className="w-4 h-4 text-teal-600" />
+                <h3 className="text-xs font-black text-stone-900 uppercase tracking-wider">
+                  Consejos Finales y Conservación
+                </h3>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
+                <div className="p-3 rounded-2xl bg-stone-50 border border-stone-100 space-y-1">
+                  <span className="font-black text-stone-900 block">❄️ Conservación inteligente</span>
+                  <p className="text-[11px] text-stone-600 leading-relaxed">
+                    Congela porciones en bandejas o cubeteras y guarda en bolsas etiquetadas (muffins, croquetas, albóndigas). Recalienta a temperatura tibia.
+                  </p>
+                </div>
+
+                <div className="p-3 rounded-2xl bg-stone-50 border border-stone-100 space-y-1">
+                  <span className="font-black text-stone-900 block">🛡️ Introducción de alérgenos</span>
+                  <p className="text-[11px] text-stone-600 leading-relaxed">
+                    Introduce alérgenos (huevo, pescado, cacahuete) en pequeñas cantidades y observa 48 horas. La paciencia es clave para identificar reacciones.
+                  </p>
+                </div>
+
+                <div className="p-3 rounded-2xl bg-stone-50 border border-stone-100 space-y-1">
+                  <span className="font-black text-stone-900 block">🎨 Variedad visual</span>
+                  <p className="text-[11px] text-stone-600 leading-relaxed">
+                    Mantén variedad de colores en el plato: al menos 3 colores por comida asegura diversidad nutricional y atractivo para el bebé.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* 5. Lista de Compras Básica de los Recetarios */}
             <div className="bg-white rounded-3xl border border-stone-200 p-4 shadow-2xs space-y-3">
               <div className="flex items-center justify-between border-b border-stone-100 pb-2">
                 <div className="flex items-center gap-2">
@@ -538,7 +817,7 @@ export const BonusRecipesScreen: React.FC<BonusRecipesScreenProps> = ({ onBack }
       </div>
 
       {/* ========================================================================= */}
-      {/* DETALLE COMPLETO DE RECETA (MODAL DRAWER) */}
+      {/* DETALLE COMPLETO DE RECETA (MODAL DRAWER NATIVO) */}
       {/* ========================================================================= */}
       <AnimatePresence>
         {selectedRecipe && (
@@ -713,7 +992,3 @@ export const BonusRecipesScreen: React.FC<BonusRecipesScreenProps> = ({ onBack }
     </div>
   );
 };
-
-function activeTabOrBookTabConsejos(tab: BonusTab): boolean {
-  return tab === 'consejos_porciones';
-}

@@ -94,39 +94,12 @@ export const DEFAULT_BABY_PROFILE: BabyProfile = {
 
 export const DEFAULT_GROWTH_RECORDS: GrowthRecord[] = [
   {
-    id: 'g-1',
+    id: 'g-initial',
     date: '2026-02-15',
     ageMonths: 0,
     weightKg: 3.25,
     heightCm: 50,
     headCircumferenceCm: 35,
-    notes: 'Nacimiento en clínica'
-  },
-  {
-    id: 'g-2',
-    date: '2026-04-15',
-    ageMonths: 2,
-    weightKg: 5.1,
-    heightCm: 56.5,
-    headCircumferenceCm: 38.5,
-    notes: 'Revisión pediátrica 2 meses'
-  },
-  {
-    id: 'g-3',
-    date: '2026-06-15',
-    ageMonths: 4,
-    weightKg: 6.7,
-    heightCm: 62.5,
-    headCircumferenceCm: 41,
-    notes: 'Vacunas y control 4 meses'
-  },
-  {
-    id: 'g-4',
-    date: '2026-08-15',
-    ageMonths: 6,
-    weightKg: 7.85,
-    heightCm: 67,
-    headCircumferenceCm: 43,
-    notes: 'Control 6 meses: ¡Autorizado a iniciar alimentación complementaria!'
+    notes: 'Registro inicial de nacimiento'
   }
 ];

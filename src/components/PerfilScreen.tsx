@@ -45,11 +45,22 @@ export const PerfilScreen: React.FC = () => {
   const [showEditProfileModal, setShowEditProfileModal] = useState(false);
 
   // Form states for new measurement
-  const [newWeight, setNewWeight] = useState<string>('8.1');
-  const [newHeight, setNewHeight] = useState<string>('68');
-  const [newHead, setNewHead] = useState<string>('43.5');
+  const [newWeight, setNewWeight] = useState<string>('');
+  const [newHeight, setNewHeight] = useState<string>('');
+  const [newHead, setNewHead] = useState<string>('');
   const [newDate, setNewDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [newNotes, setNewNotes] = useState<string>('');
+
+  const openAddMeasurementModal = () => {
+    const sorted = [...growthRecords].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    const latest = sorted[0];
+    setNewWeight(latest ? latest.weightKg.toString() : baby.birthWeight.toString());
+    setNewHeight(latest ? latest.heightCm.toString() : baby.birthHeight.toString());
+    setNewHead(latest?.headCircumferenceCm ? latest.headCircumferenceCm.toString() : '');
+    setNewDate(new Date().toISOString().split('T')[0]);
+    setNewNotes('');
+    setShowAddModal(true);
+  };
 
   // Form states for edit profile
   const [editName, setEditName] = useState(baby.name);
@@ -57,6 +68,17 @@ export const PerfilScreen: React.FC = () => {
   const [editBirthDate, setEditBirthDate] = useState(baby.birthDate);
   const [editBirthWeight, setEditBirthWeight] = useState(baby.birthWeight.toString());
   const [editBirthHeight, setEditBirthHeight] = useState(baby.birthHeight.toString());
+  const [, setActiveEditField] = useState<'name' | 'birthDate' | 'birthWeight' | 'birthHeight' | 'gender' | 'all'>('all');
+
+  const openEditModalForField = (field: 'name' | 'birthDate' | 'birthWeight' | 'birthHeight' | 'gender' | 'all') => {
+    setEditName(baby.name);
+    setEditGender(baby.gender || 'boy');
+    setEditBirthDate(baby.birthDate);
+    setEditBirthWeight(baby.birthWeight.toString());
+    setEditBirthHeight(baby.birthHeight.toString());
+    setActiveEditField(field);
+    setShowEditProfileModal(true);
+  };
 
   const age = calculateBabyAge(baby.birthDate);
 
@@ -186,7 +208,7 @@ export const PerfilScreen: React.FC = () => {
   const acceptedFoodsCount = foodsTracker.filter(f => f.status === 'accepted').length;
 
   return (
-    <div id="perfil-screen" className="flex-1 overflow-y-auto px-4 pt-3 pb-36 no-scrollbar">
+    <div id="perfil-screen" className="flex-1 overflow-y-auto px-4 pt-3 pb-36 no-scrollbar baby-clouds-pattern">
       {/* Title */}
       <div className="flex items-center justify-between mb-4">
         <div>
@@ -305,12 +327,23 @@ export const PerfilScreen: React.FC = () => {
           )}
         </div>
 
-        <h3 className="text-2xl font-extrabold text-[#292524] font-display flex items-center justify-center gap-2">
-          <span>{baby.name || 'Mi Bebé'}</span>
+        <div className="flex items-center justify-center gap-2">
+          <h3 className="text-2xl font-extrabold text-[#292524] font-display">
+            {baby.name || 'Mi Bebé'}
+          </h3>
+          <button
+            type="button"
+            onClick={() => openEditModalForField('name')}
+            className="w-7 h-7 rounded-full bg-stone-200/70 hover:bg-stone-300 text-stone-700 flex items-center justify-center transition-colors active-press shadow-2xs"
+            title="Editar nombre del bebé"
+            aria-label="Editar nombre del bebé"
+          >
+            <Edit2 className="w-3.5 h-3.5" />
+          </button>
           <span className="text-sm font-bold px-2 py-0.5 rounded-full bg-white/80 border border-[#E7E5E4] text-stone-600">
             {baby.gender === 'girl' ? 'Niña ♀' : 'Niño ♂'}
           </span>
-        </h3>
+        </div>
         <p className="text-sm font-semibold text-[#DE5D43] mt-0.5">
           {age.displayText} de edad
         </p>
@@ -328,17 +361,27 @@ export const PerfilScreen: React.FC = () => {
 
       {/* 2. Datos al Nacer */}
       <div className="bg-white rounded-3xl p-5 border border-[#E7E5E4] shadow-xs mb-5">
-        <div className="flex items-center gap-2 mb-3.5">
-          <div className="w-8 h-8 rounded-xl bg-[#FCEEEA] text-[#DE5D43] flex items-center justify-center">
-            <Baby className="w-4 h-4" />
+        <div className="flex items-center justify-between mb-3.5">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-xl bg-[#FCEEEA] text-[#DE5D43] flex items-center justify-center">
+              <Baby className="w-4 h-4" />
+            </div>
+            <h4 className="text-base font-bold text-[#292524] font-display">
+              Datos al nacer
+            </h4>
           </div>
-          <h4 className="text-base font-bold text-[#292524] font-display">
-            Datos al nacer
-          </h4>
         </div>
 
         <div className="grid grid-cols-3 gap-2.5">
-          <div className="bg-[#FAF7F2] p-3 rounded-2xl border border-[#E7E5E4]/80 text-center">
+          <div className="bg-[#FAF7F2] p-3 rounded-2xl border border-[#E7E5E4]/80 text-center relative group">
+            <button
+              type="button"
+              onClick={() => openEditModalForField('birthWeight')}
+              className="absolute top-1.5 right-1.5 w-5 h-5 rounded-md bg-stone-200/80 hover:bg-stone-300 text-stone-700 flex items-center justify-center active-press"
+              title="Editar peso al nacer"
+            >
+              <Edit2 className="w-2.5 h-2.5" />
+            </button>
             <Scale className="w-4 h-4 text-[#DE5D43] mx-auto mb-1" />
             <span className="text-[10px] uppercase font-bold text-[#A8A29E] block">
               Peso
@@ -348,7 +391,15 @@ export const PerfilScreen: React.FC = () => {
             </span>
           </div>
 
-          <div className="bg-[#FAF7F2] p-3 rounded-2xl border border-[#E7E5E4]/80 text-center">
+          <div className="bg-[#FAF7F2] p-3 rounded-2xl border border-[#E7E5E4]/80 text-center relative group">
+            <button
+              type="button"
+              onClick={() => openEditModalForField('birthHeight')}
+              className="absolute top-1.5 right-1.5 w-5 h-5 rounded-md bg-stone-200/80 hover:bg-stone-300 text-stone-700 flex items-center justify-center active-press"
+              title="Editar talla al nacer"
+            >
+              <Edit2 className="w-2.5 h-2.5" />
+            </button>
             <Ruler className="w-4 h-4 text-[#4A7C59] mx-auto mb-1" />
             <span className="text-[10px] uppercase font-bold text-[#A8A29E] block">
               Talla
@@ -358,7 +409,15 @@ export const PerfilScreen: React.FC = () => {
             </span>
           </div>
 
-          <div className="bg-[#FAF7F2] p-3 rounded-2xl border border-[#E7E5E4]/80 text-center">
+          <div className="bg-[#FAF7F2] p-3 rounded-2xl border border-[#E7E5E4]/80 text-center relative group">
+            <button
+              type="button"
+              onClick={() => openEditModalForField('birthDate')}
+              className="absolute top-1.5 right-1.5 w-5 h-5 rounded-md bg-stone-200/80 hover:bg-stone-300 text-stone-700 flex items-center justify-center active-press"
+              title="Editar fecha de nacimiento"
+            >
+              <Edit2 className="w-2.5 h-2.5" />
+            </button>
             <Calendar className="w-4 h-4 text-[#0284C7] mx-auto mb-1" />
             <span className="text-[10px] uppercase font-bold text-[#A8A29E] block">
               Fecha
@@ -375,7 +434,7 @@ export const PerfilScreen: React.FC = () => {
         <GrowthCurvesChart
           baby={baby}
           growthRecords={growthRecords}
-          onAddRecord={() => setShowAddModal(true)}
+          onAddRecord={openAddMeasurementModal}
         />
       </div>
 
@@ -398,7 +457,7 @@ export const PerfilScreen: React.FC = () => {
 
           <button
             id="perfil-add-measurement-btn"
-            onClick={() => setShowAddModal(true)}
+            onClick={openAddMeasurementModal}
             className="py-2 px-3 rounded-xl bg-[#E06D53] hover:bg-[#DE5D43] text-white text-xs font-bold active-press flex items-center gap-1 shadow-xs transition-colors"
           >
             <Plus className="w-3.5 h-3.5" />

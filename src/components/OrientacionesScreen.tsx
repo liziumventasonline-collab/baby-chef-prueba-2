@@ -100,7 +100,7 @@ export const OrientacionesScreen: React.FC<OrientacionesScreenProps> = ({ onBack
         </div>
 
         <h2 className="text-2xl font-black text-stone-900 tracking-tight font-display">
-          Páginas de Orientación
+          Páginas de Apoyo
         </h2>
         <p className="text-xs text-stone-500 font-medium mt-0.5">
           Comunidades y canales recomendados en Facebook para dudas y acompañamiento
@@ -122,12 +122,9 @@ export const OrientacionesScreen: React.FC<OrientacionesScreenProps> = ({ onBack
             </span>
           </div>
 
-          <h3 className="text-xl font-extrabold font-display leading-tight mb-1 text-white">
+          <h3 className="text-xl font-extrabold font-display leading-tight mb-2.5 text-white">
             Orientación en Vivo y Red de Madres
           </h3>
-          <p className="text-xs text-blue-100/90 leading-relaxed mb-3 max-w-[300px]">
-            Únete a los grupos y páginas con consejos prácticos, videos en directo, recetas de temporada y testimonios de otras familias.
-          </p>
 
           <div className="flex items-center gap-2 text-[11px] font-semibold text-blue-100 bg-white/15 px-3 py-1.5 rounded-xl backdrop-blur-xs w-fit">
             <ShieldCheck className="w-3.5 h-3.5 text-blue-200" />

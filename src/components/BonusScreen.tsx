@@ -26,25 +26,13 @@ interface BonusScreenProps {
 }
 
 export const BonusScreen: React.FC<BonusScreenProps> = ({
-  initialSubSection = 'alergenos',
+  initialSubSection = 'recetas_70',
   onBack
 }) => {
   const { setExtendedView } = useApp();
   const [activeSection, setActiveSection] = useState<BonusSubSection>(initialSubSection);
 
   const bonusModules = [
-    {
-      id: 'alergenos' as BonusSubSection,
-      title: 'Todo sobre Alérgenos',
-      badge: '6 a 24 Meses',
-      subtitle: 'Tabla por edad, regla de 3 días & protocolo',
-      icon: Shield,
-      color: 'from-teal-600 to-emerald-700',
-      activeBorder: 'border-teal-600',
-      activeBg: 'bg-teal-700 text-white',
-      badgeBg: 'bg-teal-100 text-teal-900',
-      emoji: '🛡️'
-    },
     {
       id: 'recetas_70' as BonusSubSection,
       title: '70 Recetas Nutritivas',
@@ -56,6 +44,18 @@ export const BonusScreen: React.FC<BonusScreenProps> = ({
       activeBg: 'bg-amber-600 text-white',
       badgeBg: 'bg-amber-100 text-amber-900',
       emoji: '🎁'
+    },
+    {
+      id: 'alergenos' as BonusSubSection,
+      title: 'Todo sobre Alérgenos',
+      badge: '6 a 24 Meses',
+      subtitle: 'Tabla por edad, regla de 3 días & protocolo',
+      icon: Shield,
+      color: 'from-teal-600 to-emerald-700',
+      activeBorder: 'border-teal-600',
+      activeBg: 'bg-teal-700 text-white',
+      badgeBg: 'bg-teal-100 text-teal-900',
+      emoji: '🛡️'
     },
     {
       id: 'guia_medica' as BonusSubSection,

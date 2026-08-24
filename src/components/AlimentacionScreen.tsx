@@ -72,11 +72,11 @@ export const AlimentacionScreen: React.FC = () => {
   };
 
   return (
-    <div id="alimentacion-screen" className="flex-1 overflow-y-auto px-4 pt-3 pb-36 no-scrollbar bg-stone-50">
+    <div id="alimentacion-screen" className="flex-1 overflow-y-auto px-4 pt-3 pb-36 no-scrollbar baby-clouds-pattern">
       {/* Title & Baby Context */}
       <div className="mb-3">
         <h2 className="text-2xl font-black text-stone-900 tracking-tight font-display">
-          Alimentación
+          Guía Pediátrica
         </h2>
         <p className="text-xs text-stone-500 font-medium">
           Guía nutricional paso a paso según la edad de desarrollo
@@ -85,7 +85,7 @@ export const AlimentacionScreen: React.FC = () => {
         {/* Alérgenos Quick Access Banner */}
         <div
           onClick={() => setExtendedView('todo_alergenos')}
-          className="mt-3 p-3 rounded-2xl bg-gradient-to-r from-teal-700 via-emerald-700 to-teal-800 text-white shadow-2xs active-press cursor-pointer flex items-center justify-between"
+          className="mt-3 p-3 rounded-2xl bg-gradient-to-r from-teal-600 via-emerald-600 to-teal-700 text-white shadow-xs active-press cursor-pointer flex items-center justify-between border border-teal-500/30"
         >
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center text-base shrink-0">
@@ -103,7 +103,7 @@ export const AlimentacionScreen: React.FC = () => {
               </p>
             </div>
           </div>
-          <span className="py-1 px-2.5 rounded-xl bg-white text-teal-950 text-xs font-black shrink-0">
+          <span className="py-1 px-2.5 rounded-xl bg-white text-teal-950 text-xs font-black shrink-0 shadow-2xs">
             Ver →
           </span>
         </div>
@@ -112,7 +112,7 @@ export const AlimentacionScreen: React.FC = () => {
       {/* 1. Horizontal Scrollable Month Selector */}
       <div
         ref={scrollRef}
-        className="flex items-center gap-2 overflow-x-auto no-scrollbar py-2 -mx-4 px-4 sticky top-14 bg-stone-50/95 backdrop-blur-md z-20 border-b border-stone-200/60 mb-4"
+        className="flex items-center gap-2 overflow-x-auto no-scrollbar py-2 -mx-4 px-4 sticky top-14 bg-white/90 backdrop-blur-md z-20 border-b border-rose-100/70 mb-4 shadow-2xs"
       >
         {monthsList.map((month) => {
           const isSelected = selectedStageMonth === month;

@@ -144,7 +144,7 @@ export const MoreMenuScreen: React.FC = () => {
       items: [
         {
           id: 'orientaciones',
-          label: 'Páginas de Orientación en Facebook',
+          label: 'Páginas de Apoyo en Facebook',
           desc: '6 canales de BLW, nutrición y grupos de apoyo',
           icon: Users,
           color: 'text-blue-700',
@@ -201,7 +201,7 @@ export const MoreMenuScreen: React.FC = () => {
   ];
 
   return (
-    <div id="more-menu-screen" className="flex-1 overflow-y-auto px-4 pt-3 pb-36 no-scrollbar bg-stone-50">
+    <div id="more-menu-screen" className="flex-1 overflow-y-auto px-4 pt-3 pb-36 no-scrollbar baby-clouds-pattern">
       {/* Header */}
       <div className="mb-4">
         <h2 className="text-2xl font-black text-stone-900 tracking-tight font-display">
@@ -213,16 +213,21 @@ export const MoreMenuScreen: React.FC = () => {
       </div>
 
       {/* Baby summary banner */}
-      <div className="bg-gradient-to-r from-stone-900 to-stone-800 text-white rounded-3xl p-4 shadow-sm mb-5 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-white/10 p-0.5 backdrop-blur-xs flex items-center justify-center text-2xl">
-            {baby.gender === 'girl' ? '👧' : '👶'}
+      <div className="bg-gradient-to-r from-[#FF6B4A] via-[#FF8A65] to-[#FFA07A] text-white rounded-3xl p-4 shadow-md mb-5 flex items-center justify-between border border-rose-200/50 relative overflow-hidden">
+        <div className="absolute -top-6 -right-6 w-20 h-20 bg-white/15 rounded-full blur-xs pointer-events-none" />
+        <div className="flex items-center gap-3 relative z-10">
+          <div className="w-12 h-12 rounded-2xl bg-white/20 p-0.5 backdrop-blur-xs flex items-center justify-center text-2xl shadow-xs border border-white/30">
+            {baby.avatar || baby.photoUrl ? (
+              <img src={baby.avatar || baby.photoUrl} alt={baby.name} className="w-full h-full object-cover rounded-2xl" />
+            ) : (
+              <span>{baby.gender === 'girl' ? '👧' : '👶'}</span>
+            )}
           </div>
           <div>
-            <h3 className="text-sm font-bold font-display">
+            <h3 className="text-sm font-extrabold font-display text-white">
               {baby.name || 'Mi Bebé'}
             </h3>
-            <p className="text-xs text-emerald-400 font-medium">
+            <p className="text-xs text-white/90 font-bold">
               Perfil activo · Almacenamiento local seguro
             </p>
           </div>
@@ -231,7 +236,7 @@ export const MoreMenuScreen: React.FC = () => {
         <button
           id="more-restart-wizard-btn"
           onClick={() => setShowOnboarding(true)}
-          className="py-1.5 px-3 rounded-xl bg-white/20 hover:bg-white/30 text-white text-xs font-bold active-press transition-colors"
+          className="py-1.5 px-3 rounded-xl bg-white/25 hover:bg-white/40 text-white text-xs font-black active-press transition-colors shadow-2xs border border-white/30 relative z-10"
         >
           Editar
         </button>

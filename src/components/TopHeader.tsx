@@ -26,7 +26,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({ title, onOpenShopping }) =
   return (
     <header
       id="top-header"
-      className="sticky top-0 z-30 bg-[#FAF7F2]/90 backdrop-blur-md border-b border-[#E7E5E4]/60 px-4 pt-3 pb-2.5 flex items-center justify-between"
+      className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-rose-100/80 px-4 pt-3 pb-2.5 flex items-center justify-between shadow-2xs"
     >
       {/* Left: Baby Avatar & Quick Info */}
       <button
@@ -38,7 +38,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({ title, onOpenShopping }) =
         className="flex items-center gap-2.5 active-press text-left"
       >
         <div className="relative">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#F28B72] to-[#E06D53] p-0.5 shadow-sm">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#FF8A65] via-[#FF7043] to-[#F4511E] p-0.5 shadow-sm">
             <div className="w-full h-full rounded-full bg-white flex items-center justify-center text-lg overflow-hidden">
               {baby.avatar || baby.photoUrl ? (
                 <img src={baby.avatar || baby.photoUrl} alt={baby.name} className="w-full h-full object-cover" />
@@ -47,18 +47,21 @@ export const TopHeader: React.FC<TopHeaderProps> = ({ title, onOpenShopping }) =
               )}
             </div>
           </div>
-          <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-[#4A7C59] border-2 border-white rounded-full" />
+          <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full" />
         </div>
 
         <div className="flex flex-col">
-          <span className="text-xs font-medium text-[#78716C] leading-none">
-            Bebé
-          </span>
-          <div className="flex items-center gap-1 mt-0.5">
-            <span className="text-sm font-bold text-[#292524] tracking-tight">
+          <div className="flex items-center gap-1">
+            <span className="text-[11px] font-bold text-rose-500/90 uppercase tracking-wide">
+              Mi Bebé
+            </span>
+            <span className="text-[10px]">✨</span>
+          </div>
+          <div className="flex items-center gap-1.5 mt-0.5">
+            <span className="text-sm font-extrabold text-stone-900 tracking-tight font-display">
               {baby.name || 'Mi Bebé'}
             </span>
-            <span className="text-[11px] font-semibold px-1.5 py-0.5 rounded-full bg-[#FCEEEA] text-[#DE5D43]">
+            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-rose-50 border border-rose-200/60 text-[#DE5D43]">
               {age.shortText}
             </span>
           </div>
@@ -67,7 +70,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({ title, onOpenShopping }) =
 
       {/* Center: Title if provided */}
       {title && (
-        <h1 className="text-base font-bold text-[#292524] font-display">
+        <h1 className="text-base font-extrabold text-stone-900 font-display">
           {title}
         </h1>
       )}
@@ -84,12 +87,12 @@ export const TopHeader: React.FC<TopHeaderProps> = ({ title, onOpenShopping }) =
               setExtendedView('compras');
             }
           }}
-          className="relative p-2 text-[#57534E] hover:text-[#292524] rounded-full active-press"
+          className="relative p-2 text-stone-600 hover:text-stone-900 rounded-full active-press hover:bg-rose-50/60 transition-colors"
           aria-label="Lista de compras"
         >
-          <ShoppingBag className="w-5 h-5" />
+          <ShoppingBag className="w-5 h-5 text-stone-700" />
           {pendingShoppingCount > 0 && (
-            <span className="absolute 0 top-1 right-1 w-4 h-4 bg-[#E06D53] text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-sm">
+            <span className="absolute top-1 right-1 w-4 h-4 bg-gradient-to-r from-[#FF7043] to-[#E64A19] text-white text-[10px] font-black rounded-full flex items-center justify-center shadow-xs">
               {pendingShoppingCount > 9 ? '9+' : pendingShoppingCount}
             </span>
           )}
@@ -100,7 +103,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({ title, onOpenShopping }) =
           <button
             id="top-install-app-btn"
             onClick={() => setShowInstallModal(true)}
-            className="flex items-center gap-1 py-1.5 px-2.5 rounded-full bg-[#E06D53] text-white text-xs font-bold active-press shadow-sm hover:bg-[#DE5D43] transition-colors"
+            className="flex items-center gap-1 py-1.5 px-3 rounded-full bg-gradient-to-r from-[#FF7043] to-[#E64A19] text-white text-xs font-black active-press shadow-xs hover:opacity-95 transition-all"
           >
             <Download className="w-3.5 h-3.5" />
             <span className="hidden xs:inline">Instalar</span>

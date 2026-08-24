@@ -49,3 +49,31 @@
   padding-bottom: max(env(safe-area-inset-bottom), 16px);
 }
 
+/* Cute Baby Theme Background Patterns */
+.baby-pattern-bg {
+  background-color: #FFFDF9;
+  background-image: radial-gradient(#FDE0D7 0.75px, transparent 0.75px), radial-gradient(#E2F3EB 0.75px, #FFFDF9 0.75px);
+  background-size: 24px 24px;
+  background-position: 0 0, 12px 12px;
+}
+
+.baby-clouds-pattern {
+  background-color: #FFFDF9;
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(254, 215, 204, 0.25) 0%, transparent 25%),
+    radial-gradient(circle at 90% 80%, rgba(204, 240, 225, 0.3) 0%, transparent 30%),
+    radial-gradient(circle at 50% 50%, rgba(254, 243, 199, 0.2) 0%, transparent 40%);
+}
+
+.baby-card-glow {
+  box-shadow: 0 4px 20px -2px rgba(255, 122, 89, 0.08), 0 2px 8px -1px rgba(0, 0, 0, 0.03);
+}
+
+.baby-card-mint {
+  box-shadow: 0 4px 20px -2px rgba(46, 184, 114, 0.08), 0 2px 8px -1px rgba(0, 0, 0, 0.03);
+}
+
+.baby-card-sky {
+  box-shadow: 0 4px 20px -2px rgba(56, 189, 248, 0.08), 0 2px 8px -1px rgba(0, 0, 0, 0.03);
+}
+

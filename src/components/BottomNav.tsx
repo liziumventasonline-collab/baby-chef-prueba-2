@@ -9,10 +9,10 @@ export const BottomNav: React.FC = () => {
 
   const navItems: { id: TabType; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
     { id: 'inicio', label: 'Inicio', icon: Home },
-    { id: 'alimentacion', label: 'Alimentación', icon: UtensilsCrossed },
+    { id: 'alimentacion', label: 'Guía Pediátrica', icon: UtensilsCrossed },
     { id: 'recetas', label: 'Recetas', icon: ChefHat },
     { id: 'bonus', label: 'Bonus', icon: Sparkles },
-    { id: 'orientaciones', label: 'Orientación', icon: Users },
+    { id: 'orientaciones', label: 'Páginas de Apoyo', icon: Users },
     { id: 'mas', label: 'Más', icon: MoreHorizontal }
   ];
 
@@ -25,7 +25,7 @@ export const BottomNav: React.FC = () => {
   return (
     <nav
       id="bottom-navigation-bar"
-      className="fixed bottom-0 left-0 right-0 z-40 bg-[#FAF7F2]/95 backdrop-blur-lg border-t border-[#E7E5E4] px-2 pt-1 safe-bottom"
+      className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-xl border-t border-rose-100/90 px-2 pt-1.5 safe-bottom shadow-[0_-4px_20px_rgba(255,107,74,0.07)]"
     >
       <div className="max-w-md mx-auto flex items-center justify-around">
         {navItems.map(item => {
@@ -42,20 +42,20 @@ export const BottomNav: React.FC = () => {
               {isActive && (
                 <motion.div
                   layoutId="activeTabIndicator"
-                  className="absolute inset-x-2 inset-y-1 bg-[#FCEEEA] rounded-xl -z-10"
+                  className="absolute inset-x-1.5 inset-y-1 bg-gradient-to-br from-[#FFF0EC] to-[#FFE5DE] border border-rose-200/70 rounded-2xl -z-10 shadow-2xs"
                   transition={{ type: 'spring', stiffness: 450, damping: 35 }}
                 />
               )}
 
               <Icon
                 className={`w-5 h-5 transition-transform ${
-                  isActive ? 'text-[#E06D53] scale-110 stroke-[2.4]' : 'text-[#78716C] stroke-[1.8]'
+                  isActive ? 'text-[#E64A19] scale-110 stroke-[2.4]' : 'text-stone-400 stroke-[1.8] hover:text-stone-600'
                 }`}
               />
 
               <span
-                className={`text-[11px] mt-1 font-semibold tracking-tight transition-colors ${
-                  isActive ? 'text-[#DE5D43]' : 'text-[#78716C]'
+                className={`text-[9.5px] xs:text-[10px] sm:text-[11px] mt-0.5 font-extrabold tracking-tight text-center leading-tight transition-colors line-clamp-1 w-full px-0.5 ${
+                  isActive ? 'text-[#E64A19]' : 'text-stone-500'
                 }`}
               >
                 {item.label}

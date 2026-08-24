@@ -114,11 +114,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return DEFAULT_BABY_PROFILE;
   });
 
-  // Growth Records
+  // Growth Records (Only 1 initial baseline measurement at start)
   const [growthRecords, setGrowthRecords] = useState<GrowthRecord[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.GROWTH);
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed: GrowthRecord[] = JSON.parse(saved);
+        // Filter out any legacy dummy mock records (g-2, g-3, g-4) if present
+        const cleaned = parsed.filter(r => r.id !== 'g-2' && r.id !== 'g-3' && r.id !== 'g-4');
+        if (cleaned.length > 0) return cleaned;
+      }
     } catch (e) {
       console.error(e);
     }
@@ -251,7 +256,29 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Actions
   const updateBaby = (data: Partial<BabyProfile>) => {
-    setBaby(prev => ({ ...prev, ...data }));
+    setBaby(prev => {
+      const updated = { ...prev, ...data };
+      return updated;
+    });
+
+    // If birthWeight, birthHeight or birthDate are edited and there's only the initial record, sync it
+    if (data.birthWeight !== undefined || data.birthHeight !== undefined || data.birthDate !== undefined) {
+      setGrowthRecords(prev => {
+        if (prev.length <= 1) {
+          const first = prev[0];
+          return [{
+            id: first?.id || 'g-initial',
+            date: data.birthDate || first?.date || baby.birthDate,
+            ageMonths: 0,
+            weightKg: data.birthWeight || first?.weightKg || baby.birthWeight,
+            heightCm: data.birthHeight || first?.heightCm || baby.birthHeight,
+            headCircumferenceCm: first?.headCircumferenceCm || 35,
+            notes: first?.notes || 'Registro inicial de nacimiento'
+          }];
+        }
+        return prev;
+      });
+    }
   };
 
   const completeOnboarding = (profileData: Partial<BabyProfile>) => {
@@ -261,6 +288,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       hasCompletedOnboarding: true
     };
     setBaby(updated);
+
+    // Initialize with ONLY 1 initial measurement based on user input
+    const initialRecord: GrowthRecord = {
+      id: 'g-initial',
+      date: profileData.birthDate || updated.birthDate,
+      ageMonths: 0,
+      weightKg: profileData.birthWeight || updated.birthWeight,
+      heightCm: profileData.birthHeight || updated.birthHeight,
+      headCircumferenceCm: 35,
+      notes: 'Registro inicial de nacimiento'
+    };
+    setGrowthRecords([initialRecord]);
+
     localStorage.setItem(STORAGE_KEYS.ONBOARDED, 'true');
     setShowOnboarding(false);
   };
