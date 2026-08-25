@@ -59,8 +59,6 @@ interface AppContextType {
   showOnboarding: boolean;
   setShowOnboarding: (show: boolean) => void;
   completeOnboarding: (profileData: Partial<BabyProfile>) => void;
-  hasCompletedInstallGate: boolean;
-  completeInstallGate: () => void;
   showInstallModal: boolean;
   setShowInstallModal: (show: boolean) => void;
   installAppPrompt: () => void;
@@ -77,8 +75,7 @@ const STORAGE_KEYS = {
   FAVORITES: 'babychef_favorite_ids_v1',
   SHOPPING: 'babychef_shopping_list_v1',
   FOODS: 'babychef_tested_foods_v1',
-  ONBOARDED: 'babychef_onboarded_v1',
-  INSTALL_GATE: 'babychef_install_gate_v1'
+  ONBOARDED: 'babychef_onboarded_v1'
 };
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -91,13 +88,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Splash & Onboarding
   const [showSplash, setShowSplash] = useState<boolean>(true);
   const [showOnboarding, setShowOnboarding] = useState<boolean>(false);
-  const [hasCompletedInstallGate, setHasCompletedInstallGate] = useState<boolean>(() => {
-    try {
-      return localStorage.getItem(STORAGE_KEYS.INSTALL_GATE) === 'true';
-    } catch (e) {
-      return false;
-    }
-  });
   const [showInstallModal, setShowInstallModal] = useState<boolean>(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isPWAInstalled, setIsPWAInstalled] = useState<boolean>(false);
@@ -305,11 +295,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setShowOnboarding(false);
   };
 
-  const completeInstallGate = () => {
-    localStorage.setItem(STORAGE_KEYS.INSTALL_GATE, 'true');
-    setHasCompletedInstallGate(true);
-  };
-
   const addGrowthRecord = (record: Omit<GrowthRecord, 'id'>) => {
     const newRecord: GrowthRecord = {
       ...record,
@@ -494,8 +479,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         showOnboarding,
         setShowOnboarding,
         completeOnboarding,
-        hasCompletedInstallGate,
-        completeInstallGate,
         showInstallModal,
         setShowInstallModal,
         installAppPrompt,

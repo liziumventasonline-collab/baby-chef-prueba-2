@@ -1,12 +1,14 @@
 {
-  "name": "Baby Chef",
+  "name": "Baby Chef — Alimentación de tu Bebé",
   "short_name": "Baby Chef",
-  "description": "Alimentación complementaria para tu bebé, paso a paso.",
+  "description": "Alimentación complementaria para tu bebé, recetas BLW y seguimiento de crecimiento OMS.",
   "start_url": "/",
+  "id": "/",
+  "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#FAF7F2",
-  "theme_color": "#E06D53",
+  "background_color": "#FFFDF9",
+  "theme_color": "#FF7043",
   "icons": [
     {
       "src": "/icon-192.png",

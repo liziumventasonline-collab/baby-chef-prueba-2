@@ -29,6 +29,8 @@ export const MoreMenuScreen: React.FC = () => {
     baby,
     setExtendedView,
     setShowInstallModal,
+    installAppPrompt,
+    isInstallable,
     setShowOnboarding,
     isPWAInstalled,
     resetAllData
@@ -170,11 +172,17 @@ export const MoreMenuScreen: React.FC = () => {
               {
                 id: 'instalar',
                 label: 'Instalar Baby Chef en el móvil',
-                desc: 'Acceso directo como app nativa',
+                desc: 'Acceso directo con 1 toque como app nativa',
                 icon: Download,
-                color: 'text-emerald-700',
-                bgColor: 'bg-emerald-50',
-                action: () => setShowInstallModal(true)
+                color: 'text-orange-600',
+                bgColor: 'bg-orange-50',
+                action: () => {
+                  if (isInstallable) {
+                    installAppPrompt();
+                  } else {
+                    setShowInstallModal(true);
+                  }
+                }
               }
             ]
           : []),

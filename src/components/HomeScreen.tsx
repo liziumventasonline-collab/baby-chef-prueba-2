@@ -20,7 +20,8 @@ import {
   Camera,
   Check,
   Activity,
-  Award
+  Award,
+  Download
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import confetti from 'canvas-confetti';
@@ -33,7 +34,11 @@ export const HomeScreen: React.FC = () => {
     growthRecords,
     addGrowthRecord,
     deleteGrowthRecord,
-    setExtendedView
+    setExtendedView,
+    isPWAInstalled,
+    isInstallable,
+    installAppPrompt,
+    setShowInstallModal
   } = useApp();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -215,6 +220,45 @@ export const HomeScreen: React.FC = () => {
         accept="image/*"
         className="hidden"
       />
+
+      {/* PWA 1-Click Install Card (shown if not installed) */}
+      {!isPWAInstalled && (
+        <motion.div
+          initial={{ opacity: 0, y: -6 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-4 p-3.5 rounded-3xl bg-gradient-to-r from-[#FF7043] via-[#FF5722] to-[#E64A19] text-white shadow-md flex items-center justify-between gap-3 border border-rose-200/40 relative overflow-hidden"
+        >
+          <div className="flex items-center gap-3 relative z-10">
+            <div className="w-10 h-10 rounded-2xl bg-white/20 backdrop-blur-xs flex items-center justify-center text-xl shrink-0 shadow-2xs border border-white/30">
+              📲
+            </div>
+            <div>
+              <h4 className="text-xs font-black font-display text-white leading-tight">
+                Instalar Baby Chef en tu celular
+              </h4>
+              <p className="text-[10.5px] text-white/90 font-medium">
+                Acceso directo con 1 toque sin abrir navegador
+              </p>
+            </div>
+          </div>
+
+          <button
+            id="home-install-pwa-btn"
+            type="button"
+            onClick={() => {
+              if (isInstallable) {
+                installAppPrompt();
+              } else {
+                setShowInstallModal(true);
+              }
+            }}
+            className="py-2 px-3.5 bg-white hover:bg-white/90 text-[#E64A19] text-xs font-black rounded-xl shadow-xs shrink-0 active-press transition-all flex items-center gap-1 relative z-10"
+          >
+            <Download className="w-3.5 h-3.5" />
+            <span>Instalar</span>
+          </button>
+        </motion.div>
+      )}
 
       {/* PORTADA DEL BEBÉ: Foto, Nombre, Edad y Datos con botón de edición individual (lapicito) */}
       <motion.div

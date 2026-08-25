@@ -1,258 +1,125 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useApp } from '../context/AppContext';
-import {
-  Download,
-  Sparkles,
-  X,
-  Share,
-  PlusSquare,
-  MoreVertical,
-  ExternalLink,
-  Copy,
-  Check,
-  Smartphone,
-  Laptop,
-  CheckCircle2
-} from 'lucide-react';
+import { Download, Sparkles, X, CheckCircle2, ShieldCheck, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { BabyChefLogo } from './BabyChefLogo';
 
 export const InstallModal: React.FC = () => {
-  const { showInstallModal, setShowInstallModal, installAppPrompt, isInstallable, isPWAInstalled } = useApp();
-  const [copied, setCopied] = useState(false);
+  const {
+    showInstallModal,
+    setShowInstallModal,
+    installAppPrompt,
+    isPWAInstalled,
+    isInstallable
+  } = useApp();
 
-  // Detect platform default
-  const isIOS = typeof navigator !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
-  const [selectedTab, setSelectedTab] = useState<'android' | 'ios' | 'pc'>(isIOS ? 'ios' : 'android');
-
-  if (!showInstallModal || isPWAInstalled) return null;
-
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(window.location.href);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2500);
-  };
-
-  const handleOpenBrowser = () => {
-    window.open(window.location.href, '_blank');
-  };
+  if (!showInstallModal) return null;
 
   return (
-    <div
-      id="install-modal-overlay"
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/65 backdrop-blur-xs p-0 sm:p-4 animate-fadeIn"
-      onClick={() => setShowInstallModal(false)}
-    >
-      <motion.div
-        initial={{ y: '100%', opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        exit={{ y: '100%', opacity: 0 }}
-        transition={{ type: 'spring', damping: 26, stiffness: 280 }}
-        onClick={e => e.stopPropagation()}
-        className="w-full max-w-md bg-white rounded-t-3xl sm:rounded-3xl p-5 sm:p-6 shadow-2xl border border-stone-200 max-h-[92vh] overflow-y-auto no-scrollbar safe-bottom"
+    <AnimatePresence>
+      <div
+        id="install-modal-overlay"
+        className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-xs p-0 sm:p-4"
+        onClick={() => setShowInstallModal(false)}
       >
-        {/* Top Drag Handle for mobile */}
-        <div className="w-10 h-1.5 bg-stone-300 rounded-full mx-auto mb-3 sm:hidden" />
+        <motion.div
+          initial={{ y: '100%', opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: '100%', opacity: 0 }}
+          transition={{ type: 'spring', damping: 26, stiffness: 280 }}
+          onClick={(e) => e.stopPropagation()}
+          className="w-full max-w-sm bg-white rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl border border-rose-100 relative overflow-hidden safe-bottom"
+        >
+          {/* Top subtle bar for mobile pull */}
+          <div className="w-10 h-1.5 bg-stone-300 rounded-full mx-auto mb-4 sm:hidden" />
 
-        {/* Header with App Logo */}
-        <div className="flex items-center justify-between gap-3 mb-4">
-          <div className="flex items-center gap-3">
-            <BabyChefLogo size="md" rounded="rounded-2xl" className="shadow-xs" />
-            <div>
-              <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#E06D53]/10 text-[#E06D53] text-[11px] font-bold">
-                <Sparkles className="w-3 h-3" />
-                Acceso directo
-              </div>
-              <h3 className="text-lg font-bold text-stone-900 font-display leading-tight mt-0.5">
-                Cómo instalar Baby Chef
-              </h3>
-              <p className="text-xs text-stone-500">
-                Úsala como app nativa en tu teléfono
-              </p>
-            </div>
-          </div>
-
+          {/* Close button */}
           <button
             onClick={() => setShowInstallModal(false)}
-            className="p-2 text-stone-400 hover:text-stone-700 rounded-full active-press"
+            className="absolute top-4 right-4 p-2 text-stone-400 hover:text-stone-700 rounded-full active-press"
             aria-label="Cerrar"
           >
             <X className="w-5 h-5" />
           </button>
-        </div>
 
-        {/* Direct 1-Click Install Button if supported */}
-        <div className="mb-4 space-y-2">
-          {isInstallable ? (
-            <button
-              id="confirm-pwa-install-btn"
-              type="button"
-              onClick={() => {
-                installAppPrompt();
-              }}
-              className="w-full py-3.5 px-4 bg-[#E06D53] hover:bg-[#DE5D43] text-white font-extrabold text-sm rounded-2xl shadow-md shadow-[#E06D53]/25 flex items-center justify-center gap-2 active-press transition-all"
-            >
-              <Download className="w-4 h-4" />
-              <span>INSTALAR CON UN TOQUE</span>
-            </button>
+          {isPWAInstalled ? (
+            <div className="text-center py-4 space-y-3">
+              <div className="w-16 h-16 rounded-3xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto shadow-xs">
+                <CheckCircle2 className="w-9 h-9" />
+              </div>
+              <h3 className="text-lg font-black text-stone-900 font-display">
+                ¡Aplicación Instalada!
+              </h3>
+              <p className="text-xs text-stone-600">
+                Baby Chef ya está en la pantalla de inicio de tu celular para acceder en cualquier momento.
+              </p>
+              <button
+                type="button"
+                onClick={() => setShowInstallModal(false)}
+                className="w-full py-3 bg-emerald-600 text-white font-bold text-xs rounded-2xl active-press"
+              >
+                Listo, continuar
+              </button>
+            </div>
           ) : (
-            <button
-              type="button"
-              onClick={handleOpenBrowser}
-              className="w-full py-3 px-4 bg-[#FAF7F2] hover:bg-[#F2EBE1] text-[#E06D53] border border-[#E06D53]/30 font-bold text-xs rounded-xl flex items-center justify-center gap-2 active-press transition-all"
-            >
-              <ExternalLink className="w-3.5 h-3.5" />
-              <span>Abrir en navegador completo (Chrome / Safari)</span>
-            </button>
-          )}
-        </div>
+            <div className="text-center space-y-4">
+              {/* App Icon */}
+              <div className="relative inline-block mx-auto">
+                <BabyChefLogo size="lg" rounded="rounded-3xl" className="shadow-md" />
+                <span className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs shadow-xs border-2 border-white">
+                  ✓
+                </span>
+              </div>
 
-        {/* Device Selector Tabs */}
-        <div className="flex bg-stone-100 p-1 rounded-xl mb-4 text-xs font-bold text-stone-600">
-          <button
-            type="button"
-            onClick={() => setSelectedTab('android')}
-            className={`flex-1 py-2 px-2 rounded-lg flex items-center justify-center gap-1.5 transition-all ${
-              selectedTab === 'android'
-                ? 'bg-white text-stone-900 shadow-xs'
-                : 'text-stone-500 hover:text-stone-800'
-            }`}
-          >
-            <Smartphone className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Android</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setSelectedTab('ios')}
-            className={`flex-1 py-2 px-2 rounded-lg flex items-center justify-center gap-1.5 transition-all ${
-              selectedTab === 'ios'
-                ? 'bg-white text-stone-900 shadow-xs'
-                : 'text-stone-500 hover:text-stone-800'
-            }`}
-          >
-            <Share className="w-3.5 h-3.5 text-sky-600" />
-            <span>iPhone / Safari</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setSelectedTab('pc')}
-            className={`flex-1 py-2 px-2 rounded-lg flex items-center justify-center gap-1.5 transition-all ${
-              selectedTab === 'pc'
-                ? 'bg-white text-stone-900 shadow-xs'
-                : 'text-stone-500 hover:text-stone-800'
-            }`}
-          >
-            <Laptop className="w-3.5 h-3.5 text-indigo-600" />
-            <span>PC / Mac</span>
-          </button>
-        </div>
-
-        {/* Step by Step Instructions Display */}
-        <div className="bg-stone-50 rounded-2xl border border-stone-200/90 p-4 mb-4 text-left">
-          {selectedTab === 'android' && (
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 pb-2 border-b border-stone-200">
-                <div className="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-extrabold">
-                  1
+              <div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-rose-50 border border-rose-200/60 text-[#DE5D43] text-[11px] font-black uppercase tracking-wider mb-1.5">
+                  <Sparkles className="w-3 h-3 text-amber-500" />
+                  <span>PWA Oficial</span>
                 </div>
-                <div className="text-xs text-stone-800">
-                  En <strong>Google Chrome</strong>, toca los <strong className="inline-flex items-center px-1 bg-stone-200 rounded text-stone-900">3 puntos (⋮)</strong> en la esquina superior derecha.
+                <h3 className="text-xl font-black text-stone-900 font-display">
+                  Instalar Baby Chef
+                </h3>
+                <p className="text-xs text-stone-600 mt-1">
+                  Ten la app de nutrición y recetas en la pantalla de tu celular con 1 solo toque.
+                </p>
+              </div>
+
+              {/* Quick Benefits */}
+              <div className="bg-rose-50/50 rounded-2xl p-3 text-left border border-rose-100 space-y-2">
+                <div className="flex items-center gap-2.5 text-xs font-semibold text-stone-800">
+                  <Zap className="w-4 h-4 text-[#DE5D43] shrink-0" />
+                  <span>Apertura instantánea sin barra de navegador</span>
+                </div>
+                <div className="flex items-center gap-2.5 text-xs font-semibold text-stone-800">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>Guarda tu menú semanal y recetas favoritas</span>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 pb-2 border-b border-stone-200">
-                <div className="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-extrabold">
-                  2
-                </div>
-                <div className="text-xs text-stone-800">
-                  Selecciona la opción <strong className="text-stone-900 font-bold">"Instalar aplicación"</strong> o <strong className="text-stone-900 font-bold">"Añadir a la pantalla principal"</strong>.
-                </div>
-              </div>
+              {/* Single 1-Click Install Button */}
+              <button
+                id="direct-pwa-install-button"
+                type="button"
+                onClick={() => {
+                  installAppPrompt();
+                }}
+                className="w-full py-3.5 px-5 bg-gradient-to-r from-[#FF7043] via-[#FF5722] to-[#E64A19] hover:opacity-95 text-white font-black text-sm rounded-2xl shadow-lg shadow-orange-500/25 flex items-center justify-center gap-2 active-press transition-all"
+              >
+                <Download className="w-5 h-5" />
+                <span>INSTALAR EN EL CELULAR</span>
+              </button>
 
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-extrabold">
-                  3
-                </div>
-                <div className="text-xs text-stone-800">
-                  Pulsa <strong className="text-emerald-700 font-bold">"Instalar"</strong> o <strong className="text-emerald-700 font-bold">"Aceptar"</strong>. ¡El icono de Baby Chef aparecerá en tu teléfono!
-                </div>
-              </div>
+              <button
+                type="button"
+                onClick={() => setShowInstallModal(false)}
+                className="text-xs font-bold text-stone-400 hover:text-stone-700 py-1 transition-colors block w-full text-center"
+              >
+                Ahora no
+              </button>
             </div>
           )}
-
-          {selectedTab === 'ios' && (
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 pb-2 border-b border-stone-200">
-                <div className="w-7 h-7 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center text-xs font-extrabold">
-                  1
-                </div>
-                <div className="text-xs text-stone-800 flex items-center flex-wrap gap-1">
-                  <span>En <strong>Safari</strong>, toca el botón</span>
-                  <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-sky-50 border border-sky-200 rounded text-sky-800 font-bold">
-                    <Share className="w-3 h-3" /> Compartir
-                  </span>
-                  <span>en la barra inferior.</span>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 pb-2 border-b border-stone-200">
-                <div className="w-7 h-7 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center text-xs font-extrabold">
-                  2
-                </div>
-                <div className="text-xs text-stone-800 flex items-center flex-wrap gap-1">
-                  <span>Desliza hacia abajo y pulsa</span>
-                  <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-stone-200 rounded font-bold text-stone-900">
-                    <PlusSquare className="w-3 h-3" /> Añadir a pantalla de inicio
-                  </span>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center text-xs font-extrabold">
-                  3
-                </div>
-                <div className="text-xs text-stone-800">
-                  Toca <strong className="text-sky-700 font-bold">"Añadir"</strong> arriba a la derecha. ¡Listo!
-                </div>
-              </div>
-            </div>
-          )}
-
-          {selectedTab === 'pc' && (
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 pb-2 border-b border-stone-200">
-                <div className="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-extrabold">
-                  1
-                </div>
-                <div className="text-xs text-stone-800">
-                  En la barra de direcciones de Chrome o Edge, busca el icono <strong className="text-stone-900 font-bold">"Instalar aplicación" ⬇️</strong> a la derecha.
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-extrabold">
-                  2
-                </div>
-                <div className="text-xs text-stone-800">
-                  Haz clic en <strong className="text-indigo-700 font-bold">"Instalar"</strong> para tener Baby Chef en tu escritorio como app independiente.
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="mt-3">
-          <button
-            type="button"
-            onClick={() => setShowInstallModal(false)}
-            className="w-full py-2 bg-stone-100 hover:bg-stone-200 rounded-xl text-xs font-bold text-stone-600 transition-colors"
-          >
-            Entendido, cerrar
-          </button>
-        </div>
-      </motion.div>
-    </div>
+        </motion.div>
+      </div>
+    </AnimatePresence>
   );
 };
