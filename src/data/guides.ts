@@ -356,5 +356,78 @@ export const PEDIATRIC_GUIDES: PedagogicalGuide[] = [
         calloutText: 'El juego libre en el suelo sobre una alfombra firme es el mejor gimnasio neurológico para tu bebé.'
       }
     ]
+  },
+
+  // ========================================================
+  // GUÍA 9: GUÍA OFICIAL AEPED RESUMIDA
+  // ========================================================
+  {
+    id: 'guia-aeped',
+    title: 'Guía Oficial de Alimentación Complementaria AEPED',
+    shortDesc: 'Pautas oficiales del Comité de Nutrición y Lactancia Materna de la Asociación Española de Pediatría.',
+    icon: 'BookOpen',
+    color: 'text-sky-700',
+    bgColor: 'bg-sky-50',
+    badge: 'Comité Oficial',
+    contentSections: [
+      {
+        heading: 'Principios Fundamentales de la AEPED',
+        bulletPoints: [
+          '🥛 Mantener la lactancia materna o fórmula a demanda como alimento principal durante todo el primer año.',
+          '⏰ Inicio a los 6 meses cumplidos una vez cumplidas todas las señales de madurez psicomotora.',
+          '🧂 Cero sal añadida, cero azúcar y cero miel antes de los 12 meses (prevenir sobrecarga renal y botulismo).',
+          '🥩 Ofrecer alimentos ricos en hierro y zinc (carnes magras, legumbres, pescado, huevos) desde el inicio.',
+          '🔄 Introducir los alimentos de uno en uno, con intervalos de 2 a 3 días para observar tolerancia.',
+          '🥑 Permitir la autorregulación: el bebé decide cuánto come; los padres deciden qué alimentos saludables ofrecer.'
+        ],
+        calloutType: 'info',
+        calloutText: 'La alimentación complementaria no sustituye las tomas de leche, las complementa progresivamente.'
+      },
+      {
+        heading: 'Alimentos a Evitar durante el Primer Año',
+        bulletPoints: [
+          '🚫 Miel (riesgo de botulismo infantil grave).',
+          '🚫 Verduras de hoja verde con alto contenido en nitratos (espinacas y acelgas) en grandes cantidades.',
+          '🚫 Pescados grandes con alto contenido en mercurio (pez espada, atún rojo, cazón, lucio).',
+          '🚫 Frutos secos enteros, uvas enteras o salchichas en rodajas (riesgo máximo de atragantamiento).',
+          '🚫 Alimentos ultraprocesados, zumos de frutas y bebidas azucaradas.'
+        ],
+        calloutType: 'alert',
+        calloutText: 'La seguridad y el respeto por el ritmo del bebé son la clave del éxito alimentario.'
+      }
+    ]
+  },
+
+  // ========================================================
+  // GUÍA 10: SOPORTE Y COMUNIDAD BABY CHEF
+  // ========================================================
+  {
+    id: 'guia-soporte',
+    title: 'Atención y Orientación Nutricional Baby Chef',
+    shortDesc: 'Canales oficiales de asistencia, preguntas frecuentes y soporte al usuario.',
+    icon: 'HelpCircle',
+    color: 'text-teal-700',
+    bgColor: 'bg-teal-50',
+    badge: 'Soporte Directo',
+    contentSections: [
+      {
+        heading: 'Canales de Comunicación y Dudas',
+        bulletPoints: [
+          '📧 Correo de soporte técnico y pedagógico: gftsenterprise@outlook.com',
+          '💬 Respuestas habituales en menos de 24 horas laborables.',
+          '📱 App 100% offline: Todos los datos de tu bebé se guardan de forma privada en tu dispositivo.'
+        ],
+        calloutType: 'success',
+        calloutText: 'Estamos comprometidos con acompañarte con amor y rigor científico en la alimentación de tu bebé.'
+      },
+      {
+        heading: 'Preguntas Frecuentes',
+        bulletPoints: [
+          '❓ ¿Cómo recuperar mis datos?: La app almacena las mediciones y favoritos en la memoria local de tu navegador/PWA.',
+          '❓ ¿Las recetas son aptas desde los 6 meses?: Sí, el recetario principal está categorizado por mes de inicio (6m, 7m, 8m, 9m, 12m, 18m).',
+          '❓ ¿Cómo consultar equivalencias de ingredientes?: Usa el Glosario Regional en la sección de Recursos.'
+        ]
+      }
+    ]
   }
 ];

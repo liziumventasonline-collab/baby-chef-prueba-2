@@ -1,6 +1,7 @@
-import { Recipe } from '../types';
+import { Recipe, MealCategory } from '../types';
+import { BONUS_RECIPES_DATABASE } from './bonusRecipes';
 
-export const RECIPES_DATA: Recipe[] = [
+const BASE_RECIPES_DATA: Recipe[] = [
   // ==========================================
   // --- 1. PURÉS Y PAPILLAS (6 A 12 MESES) ---
   // ==========================================
@@ -1252,3 +1253,44 @@ export const RECIPES_DATA: Recipe[] = [
     conservation: 'Consumir recién preparado.'
   }
 ];
+
+const mappedToddlerRecipes: Recipe[] = BONUS_RECIPES_DATABASE.map(r => {
+  const is12 = r.book === '12-18m';
+  const stage = is12 ? 12 : 18;
+  const ageLabel = is12 ? '12 a 18 meses' : '18 a 24 meses';
+  let cat: MealCategory = 'comidas';
+  if (r.category === 'desayunos') cat = 'desayunos';
+  else if (r.category === 'snacks_meriendas') cat = 'snacks';
+  else cat = 'comidas';
+
+  const timeNum = parseInt(r.prepTime) || 15;
+
+  return {
+    id: `rec-toddler-${r.id}`,
+    title: r.title,
+    stageMonths: stage,
+    ageLabel: ageLabel,
+    category: cat,
+    categoryLabel: r.categoryLabel,
+    prepTimeMinutes: timeNum,
+    difficulty: 'Fácil',
+    portions: r.yields || '1 a 2 porciones',
+    texture: is12 ? 'Trocitos blandos, machacado o finger food' : 'Trozos pequeños y textura familiar',
+    imageUrl: r.image || '',
+    summary: `${r.categoryLabel} nutritivo para la etapa de ${ageLabel}.`,
+    ingredients: r.ingredients.map(ing => ({
+      item: ing,
+      amount: ''
+    })),
+    steps: r.steps,
+    shoppingList: r.ingredients,
+    tips: r.tips || [],
+    nutritionHighlights: r.benefits || ['Nutrientes esenciales', 'Energía saludable', 'Vitaminas y minerales'],
+    allergenAlert: r.allergenNote || 'Revisar según introducción previa',
+    blwFriendly: true,
+    conservation: 'Refrigerar hasta 48h o congelar en porciones.'
+  };
+});
+
+export const RECIPES_DATA: Recipe[] = [...BASE_RECIPES_DATA, ...mappedToddlerRecipes];
+

@@ -54,6 +54,15 @@ export const MoreMenuScreen: React.FC = () => {
           action: () => setExtendedView('guia_medica')
         },
         {
+          id: 'calendario_semanal',
+          label: 'Planner Semanal (24 Semanas)',
+          desc: 'Bebé Feliz en la Mesa · Tablas completas & compras',
+          icon: Calendar,
+          color: 'text-emerald-700',
+          bgColor: 'bg-emerald-50',
+          action: () => setExtendedView('calendario_semanal')
+        },
+        {
           id: 'todo_alergenos',
           label: 'Todo sobre Alérgenos (6 a 24 Meses)',
           desc: 'Plan nutricional, tabla por edad y protocolo de seguridad',
@@ -61,24 +70,6 @@ export const MoreMenuScreen: React.FC = () => {
           color: 'text-teal-700',
           bgColor: 'bg-teal-50',
           action: () => setExtendedView('todo_alergenos')
-        },
-        {
-          id: 'bonus_recetas',
-          label: 'Bonus de Recetas (12 a 24 Meses)',
-          desc: '70 recetas nutritivas: 30 de 12-18m + 40 de 18-24m',
-          icon: Sparkles,
-          color: 'text-amber-700',
-          bgColor: 'bg-amber-50',
-          action: () => setExtendedView('bonus_recetas')
-        },
-        {
-          id: 'calendario_semanal',
-          label: 'Planner Semanal (24 Semanas)',
-          desc: 'Tablas completas & compras de 6 a 24 meses',
-          icon: Calendar,
-          color: 'text-emerald-700',
-          bgColor: 'bg-emerald-50',
-          action: () => setExtendedView('calendario_semanal')
         },
         {
           id: 'platitos_creativos',

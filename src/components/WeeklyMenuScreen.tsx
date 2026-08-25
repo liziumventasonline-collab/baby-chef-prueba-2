@@ -20,7 +20,11 @@ import {
   CheckCircle2,
   Copy,
   BookOpen,
-  Apple
+  Apple,
+  Maximize2,
+  Minimize2,
+  Printer,
+  FileText
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import {
@@ -60,6 +64,7 @@ export const WeeklyMenuScreen: React.FC<WeeklyMenuScreenProps> = ({ onBack }) =>
   const [activeStageFilter, setActiveStageFilter] = useState<'all' | 'etapa1' | 'etapa2' | 'etapa3' | 'etapa4'>('all');
   const [copiedSuccess, setCopiedSuccess] = useState(false);
   const [tableCopied, setTableCopied] = useState(false);
+  const [isFullscreenModalOpen, setIsFullscreenModalOpen] = useState(false);
 
   const currentWeek: PlannerWeek =
     PLANNER_24_WEEKS.find((w) => w.weekNumber === selectedWeekNumber) || PLANNER_24_WEEKS[0];
@@ -139,7 +144,7 @@ export const WeeklyMenuScreen: React.FC<WeeklyMenuScreenProps> = ({ onBack }) =>
             )}
             <div>
               <div className="flex items-center gap-1.5">
-                <h1 className="text-base font-extrabold text-stone-900 leading-tight">
+                <h1 className="text-base font-black text-stone-900 leading-tight font-display">
                   Planner Semanal
                 </h1>
                 <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 text-[10px] font-black">
@@ -235,14 +240,7 @@ export const WeeklyMenuScreen: React.FC<WeeklyMenuScreenProps> = ({ onBack }) =>
                 : 'bg-orange-50 text-orange-900 hover:bg-orange-100 border border-orange-200'
             }`}
           >
-            🎓 Etapa 4 (18-24m)
-          </button>
-
-          <button
-            onClick={() => setExtendedView('guia_medica')}
-            className="px-3 py-1.5 rounded-full whitespace-nowrap transition-all bg-gradient-to-r from-rose-500 to-amber-500 text-white font-black shadow-xs flex items-center gap-1 active-press"
-          >
-            <span>🩺 Guía Médica (Dr. Roberto)</span>
+            🌞 Etapa 4 (18-24m)
           </button>
 
           <button
@@ -349,7 +347,7 @@ export const WeeklyMenuScreen: React.FC<WeeklyMenuScreenProps> = ({ onBack }) =>
             className="space-y-4"
           >
             {/* Visual Cover Poster Card */}
-            <div className="bg-gradient-to-br from-rose-400 via-pink-500 to-amber-400 rounded-3xl p-6 text-white text-center shadow-lg relative overflow-hidden">
+            <div className="bg-gradient-to-br from-amber-400 via-orange-500 to-teal-600 rounded-3xl p-6 text-white text-center shadow-lg relative overflow-hidden">
               <div className="absolute top-2 right-2 text-6xl opacity-20 pointer-events-none">🍼</div>
               <span className="inline-block px-3 py-1 bg-white/25 backdrop-blur-md rounded-full text-xs font-black uppercase tracking-wider mb-3">
                 Planificador Nutricional
@@ -357,12 +355,12 @@ export const WeeklyMenuScreen: React.FC<WeeklyMenuScreenProps> = ({ onBack }) =>
               <h2 className="text-2xl font-black font-display leading-tight mb-2">
                 {PLANNER_WELCOME.coverBadge}
               </h2>
-              <p className="text-sm text-pink-100 font-medium max-w-xs mx-auto mb-4">
+              <p className="text-sm text-amber-100 font-medium max-w-xs mx-auto mb-4">
                 24 semanas completas organizadas con amor desde los 6 hasta los 24 meses.
               </p>
               <button
                 onClick={() => setViewMode('poster')}
-                className="py-2.5 px-6 rounded-2xl bg-white text-pink-900 font-black text-xs shadow-md active-press inline-flex items-center gap-2 hover:bg-pink-50"
+                className="py-2.5 px-6 rounded-2xl bg-white text-stone-900 font-black text-xs shadow-md active-press inline-flex items-center gap-2 hover:bg-amber-50"
               >
                 <span>EMPEZAR CON SEMANA 1</span>
                 <ChevronRight className="w-4 h-4" />
@@ -378,7 +376,7 @@ export const WeeklyMenuScreen: React.FC<WeeklyMenuScreenProps> = ({ onBack }) =>
               <p className="text-xs text-stone-700 leading-relaxed font-normal">
                 {PLANNER_WELCOME.body}
               </p>
-              <div className="p-4 bg-rose-50/70 rounded-2xl border border-rose-100 text-rose-900 text-xs font-semibold text-center italic">
+              <div className="p-4 bg-amber-50/80 rounded-2xl border border-amber-100 text-amber-950 text-xs font-semibold text-center italic">
                 “{PLANNER_WELCOME.quote}”
               </div>
             </div>
@@ -498,6 +496,15 @@ export const WeeklyMenuScreen: React.FC<WeeklyMenuScreenProps> = ({ onBack }) =>
                 </div>
 
                 <div className="flex items-center gap-1.5">
+                  <button
+                    onClick={() => setIsFullscreenModalOpen(true)}
+                    className="py-1 px-2 rounded-lg bg-white hover:bg-stone-100 text-stone-700 border border-stone-200 text-[11px] font-bold flex items-center gap-1 shadow-2xs active-press"
+                    title="Ver lámina ampliada a pantalla completa"
+                  >
+                    <Maximize2 className="w-3 h-3 text-stone-600" />
+                    <span className="hidden sm:inline">Ampliar</span>
+                  </button>
+
                   <button
                     onClick={handleCopyTableText}
                     className="py-1 px-2.5 rounded-lg bg-white hover:bg-stone-100 text-stone-700 border border-stone-200 text-[11px] font-bold flex items-center gap-1 shadow-2xs active-press"
@@ -698,109 +705,66 @@ export const WeeklyMenuScreen: React.FC<WeeklyMenuScreenProps> = ({ onBack }) =>
               <h3 className="text-base font-black leading-tight">{currentWeek.title}</h3>
             </div>
 
-            {/* Days Selector Pills */}
-            <div className="flex items-center justify-between gap-1 overflow-x-auto py-1">
+            {/* Days Horizontal Tab Selector */}
+            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
               {currentWeek.days.map((day, idx) => (
                 <button
                   key={idx}
                   onClick={() => setSelectedDayIndex(idx)}
-                  className={`flex-1 min-w-[42px] py-2 px-1 rounded-2xl text-center flex flex-col items-center gap-1 transition-all active-press ${
+                  className={`py-2 px-3 rounded-2xl text-xs font-black whitespace-nowrap transition-all active-press ${
                     selectedDayIndex === idx
-                      ? 'bg-stone-900 text-white shadow-sm font-bold scale-105'
-                      : 'bg-white text-stone-600 border border-stone-200 font-medium hover:bg-stone-50'
+                      ? 'bg-stone-900 text-white shadow-xs'
+                      : 'bg-white text-stone-700 border border-stone-200 hover:bg-stone-100'
                   }`}
                 >
-                  <span className="text-[10px] uppercase tracking-wider font-extrabold">
-                    {day.dayName.slice(0, 3)}
-                  </span>
-                  <span
-                    className={`w-2 h-2 rounded-full ${
-                      selectedDayIndex === idx ? 'bg-emerald-400' : 'bg-stone-300'
-                    }`}
-                  />
+                  {day.dayName}
                 </button>
               ))}
             </div>
 
-            {/* Day Detail Card */}
-            <div className="bg-white rounded-3xl border border-stone-200 p-5 shadow-2xs space-y-4">
-              <div className="flex items-center justify-between border-b border-stone-100 pb-3">
-                <div>
-                  <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700">
-                    Menú del Día
-                  </span>
-                  <h3 className="text-lg font-black text-stone-900">{currentDay.dayName}</h3>
-                </div>
-                <div className="p-2.5 rounded-2xl bg-amber-50 text-amber-700">
-                  <Calendar className="w-5 h-5" />
-                </div>
-              </div>
-
-              {/* Meal 1: Desayuno */}
-              <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-amber-50/60 border border-amber-100">
-                <div className="p-2.5 rounded-xl bg-amber-100 text-amber-900 shrink-0 shadow-2xs">
+            {/* Day Meal Breakdown Cards */}
+            <div className="space-y-3">
+              {/* Desayuno */}
+              <div className="bg-white p-4 rounded-3xl border border-stone-200/80 shadow-2xs space-y-1.5">
+                <div className="flex items-center gap-2 text-amber-600 text-xs font-extrabold">
                   <Sun className="w-4 h-4" />
+                  <span>Desayuno</span>
                 </div>
-                <div className="space-y-0.5">
-                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-amber-900">
-                    Desayuno / Mañana
-                  </span>
-                  <p className="text-xs font-bold text-stone-900 leading-snug">
-                    {currentDay.desayuno}
-                  </p>
-                </div>
+                <h4 className="text-sm font-black text-stone-900">{currentDay.desayuno}</h4>
               </div>
 
-              {/* Meal 2: Almuerzo */}
-              <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-100">
-                <div className="p-2.5 rounded-xl bg-emerald-600 text-white shrink-0 shadow-2xs">
+              {/* Almuerzo */}
+              <div className="bg-white p-4 rounded-3xl border border-stone-200/80 shadow-2xs space-y-1.5">
+                <div className="flex items-center gap-2 text-emerald-600 text-xs font-extrabold">
                   <Utensils className="w-4 h-4" />
+                  <span>Almuerzo (Comida Principal)</span>
                 </div>
-                <div className="space-y-0.5">
-                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-900">
-                    Almuerzo Principal
-                  </span>
-                  <p className="text-xs font-extrabold text-stone-900 leading-snug">
-                    {currentDay.almuerzo}
-                  </p>
-                </div>
+                <h4 className="text-sm font-black text-stone-900">{currentDay.almuerzo}</h4>
               </div>
 
-              {/* Meal 3: Cena */}
-              <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-indigo-50/60 border border-indigo-100">
-                <div className="p-2.5 rounded-xl bg-indigo-100 text-indigo-900 shrink-0 shadow-2xs">
+              {/* Cena */}
+              <div className="bg-white p-4 rounded-3xl border border-stone-200/80 shadow-2xs space-y-1.5">
+                <div className="flex items-center gap-2 text-indigo-600 text-xs font-extrabold">
                   <Moon className="w-4 h-4" />
+                  <span>Cena</span>
                 </div>
-                <div className="space-y-0.5">
-                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-indigo-900">
-                    Cena Ligera
-                  </span>
-                  <p className="text-xs font-bold text-stone-900 leading-snug">
-                    {currentDay.cena}
-                  </p>
-                </div>
+                <h4 className="text-sm font-black text-stone-900">{currentDay.cena}</h4>
               </div>
 
-              {/* Meal 4: Snack */}
-              <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-orange-50/60 border border-orange-100">
-                <div className="p-2.5 rounded-xl bg-orange-100 text-orange-900 shrink-0 shadow-2xs">
+              {/* Snack */}
+              <div className="bg-white p-4 rounded-3xl border border-stone-200/80 shadow-2xs space-y-1.5">
+                <div className="flex items-center gap-2 text-rose-600 text-xs font-extrabold">
                   <Apple className="w-4 h-4" />
+                  <span>Snack / Merienda</span>
                 </div>
-                <div className="space-y-0.5">
-                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-orange-900">
-                    Snack / Colación
-                  </span>
-                  <p className="text-xs font-bold text-stone-900 leading-snug">
-                    {currentDay.snack}
-                  </p>
-                </div>
+                <h4 className="text-sm font-black text-stone-900">{currentDay.snack}</h4>
               </div>
             </div>
           </motion.div>
         )}
 
         {/* ========================================================================= */}
-        {/* 5. VISTA LISTA DE COMPRAS DEDICADA */}
+        {/* 5. VISTA LISTA DE COMPRAS AISLADA */}
         {/* ========================================================================= */}
         {viewMode === 'shopping' && (
           <motion.div
@@ -809,69 +773,137 @@ export const WeeklyMenuScreen: React.FC<WeeklyMenuScreenProps> = ({ onBack }) =>
             animate={{ opacity: 1, y: 0 }}
             className="space-y-4"
           >
-            {/* Header Shopping Card */}
-            <div className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-5 rounded-3xl shadow-md space-y-2">
-              <div className="flex items-center justify-between">
+            <div className="bg-emerald-600 text-white p-4 rounded-3xl shadow-md flex items-center justify-between">
+              <div>
                 <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/20">
-                  {currentWeek.stageName} · {currentWeek.stageAgeRange}
+                  Semana {currentWeek.weekNumber} · {currentWeek.stageAgeRange}
                 </span>
-                <span className="text-xs font-bold">Semana {currentWeek.weekNumber} de 24</span>
+                <h3 className="text-base font-black font-display mt-1">Lista de Compras</h3>
               </div>
-              <h3 className="text-base font-black">Lista de Compras del Súper</h3>
-              <p className="text-xs text-emerald-100 font-normal">
-                Ingredientes necesarios para preparar las comidas de los 7 días de esta semana.
-              </p>
-
               <button
                 onClick={handleLoadShoppingList}
-                className="w-full mt-2 py-2.5 px-4 rounded-2xl bg-white text-emerald-950 font-black text-xs flex items-center justify-center gap-2 shadow-sm active-press hover:bg-emerald-50"
+                className="py-2 px-3.5 rounded-2xl bg-white text-emerald-950 font-black text-xs shadow-xs active-press"
               >
-                {copiedSuccess ? (
-                  <>
-                    <Check className="w-4 h-4 text-emerald-700" />
-                    <span>¡Lista agregada con éxito a tu carrito!</span>
-                  </>
-                ) : (
-                  <>
-                    <ShoppingCart className="w-4 h-4 text-emerald-700" />
-                    <span>Añadir todos a Mi Lista del Súper</span>
-                  </>
-                )}
+                {copiedSuccess ? '¡Cargado!' : '+ Cargar al Súper'}
               </button>
             </div>
 
-            {/* Categorized Interactive Shopping List */}
-            <div className="space-y-3">
-              {currentWeek.shoppingList.map((cat, cIdx) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {currentWeek.shoppingList.map((cat, idx) => (
                 <div
-                  key={cIdx}
-                  className="bg-white p-4 rounded-3xl border border-stone-200 shadow-2xs space-y-2"
+                  key={idx}
+                  className="bg-white p-4 rounded-3xl border border-stone-200/80 shadow-2xs space-y-2"
                 >
-                  <div className="flex items-center gap-2 border-b border-stone-100 pb-2">
-                    <span className="text-lg">{cat.icon}</span>
-                    <h4 className="text-xs font-black text-stone-900 uppercase tracking-wider">
-                      {cat.category}
-                    </h4>
+                  <div className="flex items-center gap-2 text-sm font-black text-stone-900 border-b border-stone-100 pb-1.5">
+                    <span className="text-base">{cat.icon}</span>
+                    <span>{cat.category}</span>
                   </div>
-                  <div className="space-y-1.5">
+                  <ul className="space-y-1.5">
                     {cat.items.map((item, iIdx) => (
-                      <div
+                      <li
                         key={iIdx}
-                        className="flex items-center justify-between p-2 rounded-xl bg-stone-50 border border-stone-100 text-xs"
+                        className="text-xs text-stone-700 font-medium flex items-center gap-2"
                       >
-                        <span className="font-semibold text-stone-800">{item}</span>
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-900">
-                          Listo
-                        </span>
-                      </div>
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                        <span>{item}</span>
+                      </li>
                     ))}
-                  </div>
+                  </ul>
                 </div>
               ))}
             </div>
           </motion.div>
         )}
       </div>
+
+      {/* FULLSCREEN MODAL FOR POSTER ZOOM */}
+      <AnimatePresence>
+        {isFullscreenModalOpen && (
+          <div
+            id="planner-fullscreen-modal"
+            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex flex-col p-2 sm:p-6"
+            onClick={() => setIsFullscreenModalOpen(false)}
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-3xl mx-auto flex-1 flex flex-col bg-white rounded-3xl overflow-hidden shadow-2xl"
+            >
+              {/* Modal Top Bar */}
+              <div
+                className={`bg-gradient-to-r ${currentWeek.themeColor.headerBg} p-4 text-white flex items-center justify-between`}
+              >
+                <div>
+                  <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/20">
+                    Semana {currentWeek.weekNumber} · {currentWeek.stageAgeRange}
+                  </span>
+                  <h3 className="text-base font-black">{currentWeek.title}</h3>
+                </div>
+                <button
+                  onClick={() => setIsFullscreenModalOpen(false)}
+                  className="p-2 rounded-full bg-white/20 hover:bg-white/30 text-white active-press"
+                  aria-label="Cerrar"
+                >
+                  <Minimize2 className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Scrollable Table & Shopping in Modal */}
+              <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                <div className="overflow-x-auto border border-stone-200 rounded-2xl">
+                  <table className="w-full text-left border-collapse min-w-[580px]">
+                    <thead>
+                      <tr className="bg-stone-100 border-b border-stone-200 text-stone-800 text-xs font-black uppercase">
+                        <th className="py-2.5 px-3">Día</th>
+                        <th className="py-2.5 px-3">Desayuno ☀️</th>
+                        <th className="py-2.5 px-3">Almuerzo 🍲</th>
+                        <th className="py-2.5 px-3">Cena 🌙</th>
+                        <th className="py-2.5 px-3">Snack 🍎</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-stone-100 text-xs">
+                      {currentWeek.days.map((day, idx) => (
+                        <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-stone-50/70'}>
+                          <td className="py-2.5 px-3 font-extrabold text-stone-900 border-r border-stone-100">
+                            {day.dayName}
+                          </td>
+                          <td className="py-2.5 px-3 text-stone-700">{day.desayuno}</td>
+                          <td className="py-2.5 px-3 font-bold text-stone-900 bg-emerald-50/40">{day.almuerzo}</td>
+                          <td className="py-2.5 px-3 text-stone-700">{day.cena}</td>
+                          <td className="py-2.5 px-3 text-stone-600">{day.snack}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div className="p-4 bg-stone-50 rounded-2xl border border-stone-200">
+                  <h4 className="text-xs font-black uppercase text-stone-900 mb-3 flex items-center gap-1.5">
+                    <span>🛒</span>
+                    <span>Lista de Compras de la Semana {currentWeek.weekNumber}</span>
+                  </h4>
+                  <div className="grid grid-cols-2 gap-2">
+                    {currentWeek.shoppingList.map((cat, idx) => (
+                      <div key={idx} className="bg-white p-3 rounded-xl border border-stone-200 text-xs">
+                        <span className="font-extrabold text-stone-900 flex items-center gap-1 mb-1">
+                          <span>{cat.icon}</span>
+                          <span>{cat.category}</span>
+                        </span>
+                        <ul className="space-y-0.5">
+                          {cat.items.map((item, iIdx) => (
+                            <li key={iIdx} className="text-[11px] text-stone-600">
+                              • {item}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

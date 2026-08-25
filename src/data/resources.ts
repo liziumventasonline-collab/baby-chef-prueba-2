@@ -95,10 +95,10 @@ export const RESOURCES_DATA: ResourceItem[] = [
     subtitle: 'Comité de Nutrición y Lactancia Materna',
     organization: 'Asociación Española de Pediatría (AEPED)',
     category: 'pediatria',
-    url: 'https://www.aeped.es/comite-nutricion-y-lactancia-materna/nutricion-infantil/documentos/guia-alimentacion-complementaria',
     iconName: 'BookOpen',
     description: 'Documento científico oficial sobre inicio, orden de alimentos, prevención de anemia y requerimientos del primer año.',
-    badge: 'Enlace Oficial'
+    badge: 'Manual Oficial',
+    internalGuideId: 'guia-aeped'
   },
   {
     id: 'res-guia-10',
@@ -106,9 +106,9 @@ export const RESOURCES_DATA: ResourceItem[] = [
     subtitle: 'Equipo de soporte y contacto nutricional',
     organization: 'Equipo Baby Chef (Nutr. Carla Castilho)',
     category: 'guia',
-    url: 'mailto:gftsenterprise@outlook.com',
     iconName: 'HelpCircle',
     description: 'Contacto directo de soporte técnico y orientaciones de la comunidad Baby Chef: gftsenterprise@outlook.com',
-    badge: 'Soporte'
+    badge: 'Soporte',
+    internalGuideId: 'guia-soporte'
   }
 ];

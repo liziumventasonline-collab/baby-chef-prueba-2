@@ -34,6 +34,7 @@ export const HomeScreen: React.FC = () => {
     growthRecords,
     addGrowthRecord,
     deleteGrowthRecord,
+    setActiveTab,
     setExtendedView,
     isPWAInstalled,
     isInstallable,
@@ -345,13 +346,13 @@ export const HomeScreen: React.FC = () => {
 
         {/* Ficha de Datos del Bebé (Grid) - Cada dato con su lapicito de edición */}
         <div className="p-4 bg-white/90">
-          <div className="grid grid-cols-2 gap-2.5">
+          <div className="space-y-2.5">
             {/* Fecha de Nacimiento y Sexo con su lapicito */}
             <div className="p-3 rounded-2xl bg-gradient-to-br from-[#FFF6F3] to-[#FFEBE5] border border-rose-200/80 shadow-2xs">
               <div className="flex items-center justify-between gap-1 mb-1">
                 <div className="flex items-center gap-1.5 text-[#DE5D43] text-[10px] font-black uppercase tracking-wider">
                   <Calendar className="w-3.5 h-3.5 text-[#E06D53]" />
-                  <span>Nacimiento</span>
+                  <span>Fecha de Nacimiento & Sexo</span>
                 </div>
                 <button
                   type="button"
@@ -363,87 +364,67 @@ export const HomeScreen: React.FC = () => {
                   <Edit2 className="w-3 h-3" />
                 </button>
               </div>
-              <p className="text-xs font-black text-stone-900">
-                {formatDateSpanish(baby.birthDate)}
-              </p>
-              <p className="text-[10px] text-rose-700/80 font-bold mt-0.5">
-                Sexo: {baby.gender === 'girl' ? 'Niña 👧' : 'Niño 👦'}
-              </p>
+              <div className="flex items-center justify-between">
+                <p className="text-xs font-black text-stone-900">
+                  {formatDateSpanish(baby.birthDate)}
+                </p>
+                <p className="text-[11px] text-rose-700 font-bold bg-white/80 px-2 py-0.5 rounded-lg border border-rose-200/50">
+                  {baby.gender === 'girl' ? 'Niña 👧' : 'Niño 👦'}
+                </p>
+              </div>
             </div>
 
-            {/* Estado Nutricional OMS con su lapicito */}
-            <div className="p-3 rounded-2xl bg-gradient-to-br from-[#F0FDF4] to-[#DCFCE7] border border-emerald-200/90 shadow-2xs">
-              <div className="flex items-center justify-between gap-1 mb-1">
-                <div className="flex items-center gap-1.5 text-emerald-800 text-[10px] font-black uppercase tracking-wider">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Estado OMS</span>
+            {/* 2 Columnas para Peso y Talla */}
+            <div className="grid grid-cols-2 gap-2.5">
+              {/* Evolución de Peso con su lapicito */}
+              <div className="p-3 rounded-2xl bg-gradient-to-br from-[#FFFBEB] to-[#FEF3C7] border border-amber-200/80 shadow-2xs">
+                <div className="flex items-center justify-between gap-1 mb-1">
+                  <div className="flex items-center gap-1.5 text-amber-800 text-[10px] font-black uppercase tracking-wider">
+                    <Scale className="w-3.5 h-3.5 text-amber-600" />
+                    <span>Peso Actual</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => openEditModalForField('birthWeight')}
+                    className="w-6 h-6 rounded-lg bg-white/90 hover:bg-white text-amber-700 shadow-2xs flex items-center justify-center active-press transition-colors border border-amber-200/60"
+                    title="Editar peso al nacer"
+                    aria-label="Editar peso"
+                  >
+                    <Edit2 className="w-3 h-3" />
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={openAddMeasurementModal}
-                  className="w-6 h-6 rounded-lg bg-white/90 hover:bg-white text-emerald-700 shadow-2xs flex items-center justify-center active-press transition-colors border border-emerald-200/60"
-                  title="Registrar nueva medición"
-                  aria-label="Registrar medición"
-                >
-                  <Edit2 className="w-3 h-3" />
-                </button>
+                <p className="text-base font-black text-amber-950 font-display">
+                  {latestGrowth.weightKg} <span className="text-xs font-bold text-amber-800">kg</span>
+                </p>
+                <p className="text-[10px] text-amber-700 font-bold mt-0.5">
+                  Al nacer: {baby.birthWeight} kg ({+(latestGrowth.weightKg - baby.birthWeight).toFixed(2)} kg)
+                </p>
               </div>
-              <p className="text-xs font-black text-emerald-950">
-                {weightEval.statusLabel}
-              </p>
-              <p className="text-[10px] text-emerald-700 font-bold mt-0.5">
-                Percentil: {weightEval.percentileApprox} (Saludable)
-              </p>
-            </div>
 
-            {/* Evolución de Peso con su lapicito */}
-            <div className="p-3 rounded-2xl bg-gradient-to-br from-[#FFFBEB] to-[#FEF3C7] border border-amber-200/80 shadow-2xs">
-              <div className="flex items-center justify-between gap-1 mb-1">
-                <div className="flex items-center gap-1.5 text-amber-800 text-[10px] font-black uppercase tracking-wider">
-                  <Scale className="w-3.5 h-3.5 text-amber-600" />
-                  <span>Peso Actual</span>
+              {/* Evolución de Talla con su lapicito */}
+              <div className="p-3 rounded-2xl bg-gradient-to-br from-[#F0F9FF] to-[#E0F2FE] border border-sky-200/80 shadow-2xs">
+                <div className="flex items-center justify-between gap-1 mb-1">
+                  <div className="flex items-center gap-1.5 text-sky-800 text-[10px] font-black uppercase tracking-wider">
+                    <Ruler className="w-3.5 h-3.5 text-sky-600" />
+                    <span>Talla Actual</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => openEditModalForField('birthHeight')}
+                    className="w-6 h-6 rounded-lg bg-white/90 hover:bg-white text-sky-700 shadow-2xs flex items-center justify-center active-press transition-colors border border-sky-200/60"
+                    title="Editar talla al nacer"
+                    aria-label="Editar talla"
+                  >
+                    <Edit2 className="w-3 h-3" />
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => openEditModalForField('birthWeight')}
-                  className="w-6 h-6 rounded-lg bg-white/90 hover:bg-white text-amber-700 shadow-2xs flex items-center justify-center active-press transition-colors border border-amber-200/60"
-                  title="Editar peso al nacer"
-                  aria-label="Editar peso"
-                >
-                  <Edit2 className="w-3 h-3" />
-                </button>
+                <p className="text-base font-black text-sky-950 font-display">
+                  {latestGrowth.heightCm} <span className="text-xs font-bold text-sky-800">cm</span>
+                </p>
+                <p className="text-[10px] text-sky-700 font-bold mt-0.5">
+                  Al nacer: {baby.birthHeight} cm (+{+(latestGrowth.heightCm - baby.birthHeight).toFixed(1)} cm)
+                </p>
               </div>
-              <p className="text-base font-black text-amber-950 font-display">
-                {latestGrowth.weightKg} <span className="text-xs font-bold text-amber-800">kg</span>
-              </p>
-              <p className="text-[10px] text-amber-700 font-bold mt-0.5">
-                Al nacer: {baby.birthWeight} kg ({+(latestGrowth.weightKg - baby.birthWeight).toFixed(2)} kg)
-              </p>
-            </div>
-
-            {/* Evolución de Talla con su lapicito */}
-            <div className="p-3 rounded-2xl bg-gradient-to-br from-[#F0F9FF] to-[#E0F2FE] border border-sky-200/80 shadow-2xs">
-              <div className="flex items-center justify-between gap-1 mb-1">
-                <div className="flex items-center gap-1.5 text-sky-800 text-[10px] font-black uppercase tracking-wider">
-                  <Ruler className="w-3.5 h-3.5 text-sky-600" />
-                  <span>Talla Actual</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => openEditModalForField('birthHeight')}
-                  className="w-6 h-6 rounded-lg bg-white/90 hover:bg-white text-sky-700 shadow-2xs flex items-center justify-center active-press transition-colors border border-sky-200/60"
-                  title="Editar talla al nacer"
-                  aria-label="Editar talla"
-                >
-                  <Edit2 className="w-3 h-3" />
-                </button>
-              </div>
-              <p className="text-base font-black text-sky-950 font-display">
-                {latestGrowth.heightCm} <span className="text-xs font-bold text-sky-800">cm</span>
-              </p>
-              <p className="text-[10px] text-sky-700 font-bold mt-0.5">
-                Al nacer: {baby.birthHeight} cm (+{+(latestGrowth.heightCm - baby.birthHeight).toFixed(1)} cm)
-              </p>
             </div>
           </div>
         </div>
@@ -530,29 +511,29 @@ export const HomeScreen: React.FC = () => {
           </div>
         </div>
 
-        {/* Bonus Recetas 12 a 24 Meses Banner */}
+        {/* Planner Semanal (24 Semanas) Banner */}
         <div
-          onClick={() => setExtendedView('bonus_recetas')}
-          className="mt-4 p-4 rounded-3xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white shadow-xs active-press cursor-pointer flex items-center justify-between"
+          onClick={() => setActiveTab('planner')}
+          className="mt-4 p-4 rounded-3xl bg-gradient-to-r from-teal-600 via-emerald-600 to-teal-700 text-white shadow-xs active-press cursor-pointer flex items-center justify-between"
         >
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-xl shrink-0">
-              🎁
+              🍼
             </div>
             <div>
               <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-black/20 text-white">
-                Pestaña Bonus
+                Planificador Nutricional
               </span>
               <h3 className="text-xs font-black leading-tight text-white mt-0.5">
-                70 Recetas Nutritivas (12 a 24 Meses)
+                Bebé Feliz en la Mesa · Planner (24 Semanas)
               </h3>
-              <p className="text-[11px] text-amber-100 font-medium">
-                30 recetas (12-18m) + 40 recetas (18-24m)
+              <p className="text-[11px] text-teal-100 font-medium">
+                Tablas completas y listas de compras ilustradas (6 a 24 meses)
               </p>
             </div>
           </div>
           <span className="py-1.5 px-3 rounded-xl bg-white text-stone-900 text-xs font-black shadow-2xs shrink-0">
-            Ver →
+            Abrir →
           </span>
         </div>
       </div>

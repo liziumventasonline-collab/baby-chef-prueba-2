@@ -16,9 +16,7 @@ import { WeeklyMenuScreen } from './WeeklyMenuScreen';
 import { CreativePlatesScreen } from './CreativePlatesScreen';
 import { OrientacionesScreen } from './OrientacionesScreen';
 import { MedicalGuideScreen } from './MedicalGuideScreen';
-import { BonusRecipesScreen } from './BonusRecipesScreen';
 import { AllergensGuideScreen } from './AllergensGuideScreen';
-import { BonusScreen } from './BonusScreen';
 import { OnboardingWizard } from './OnboardingWizard';
 import { SplashScreen } from './SplashScreen';
 import { InstallModal } from './InstallModal';
@@ -70,12 +68,6 @@ export const NativeAppShell: React.FC = () => {
     if (extendedView === 'guia_medica') {
       return <MedicalGuideScreen onBack={() => setExtendedView('none')} />;
     }
-    if (extendedView === 'bonus') {
-      return <BonusScreen onBack={() => setExtendedView('none')} />;
-    }
-    if (extendedView === 'bonus_recetas') {
-      return <BonusRecipesScreen onBack={() => setExtendedView('none')} />;
-    }
     if (extendedView === 'todo_alergenos') {
       return <AllergensGuideScreen onBack={() => setExtendedView('none')} />;
     }
@@ -88,12 +80,8 @@ export const NativeAppShell: React.FC = () => {
         return <AlimentacionScreen />;
       case 'recetas':
         return <RecetasScreen />;
-      case 'bonus':
-        return <BonusScreen />;
-      case 'bonus_recetas':
-        return <BonusRecipesScreen />;
-      case 'todo_alergenos':
-        return <AllergensGuideScreen />;
+      case 'planner':
+        return <WeeklyMenuScreen />;
       case 'orientaciones':
         return <OrientacionesScreen />;
       case 'perfil':

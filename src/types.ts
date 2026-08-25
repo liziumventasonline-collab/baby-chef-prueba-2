@@ -175,7 +175,7 @@ export interface PedagogicalGuide {
   }[];
 }
 
-export type TabType = 'inicio' | 'alimentacion' | 'recetas' | 'bonus' | 'bonus_recetas' | 'todo_alergenos' | 'orientaciones' | 'perfil' | 'mas';
+export type TabType = 'inicio' | 'alimentacion' | 'recetas' | 'planner' | 'orientaciones' | 'perfil' | 'mas';
 export type ExtendedViewType =
   | 'none'
   | 'favoritos'
@@ -188,6 +188,4 @@ export type ExtendedViewType =
   | 'orientaciones'
   | 'guia_detalle'
   | 'guia_medica'
-  | 'bonus'
-  | 'bonus_recetas'
   | 'todo_alergenos';

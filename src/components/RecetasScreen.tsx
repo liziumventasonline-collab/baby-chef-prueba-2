@@ -193,7 +193,8 @@ export const RecetasScreen: React.FC = () => {
     { id: 9, label: '9 meses+' },
     { id: 10, label: '10 meses+' },
     { id: 11, label: '11 meses+' },
-    { id: 12, label: '12 meses+' }
+    { id: 12, label: '12–18 meses' },
+    { id: 18, label: '18–24 meses' }
   ];
 
   const categoryFilters: { id: MealCategory; label: string }[] = [
