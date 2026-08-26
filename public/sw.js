@@ -1,9 +1,8 @@
-const CACHE_NAME = 'babychef-v2';
+const CACHE_NAME = 'babychef-v3';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
   '/manifest.webmanifest',
-  '/manifest.json',
   '/logo.png',
   '/logo.jpg',
   '/icon-192.png',
@@ -17,7 +16,7 @@ const ASSETS_TO_CACHE = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE).catch(() => {});
+      return cache.addAll(ASSETS_TO_CACHE);
     })
   );
   self.skipWaiting();

@@ -32,16 +32,36 @@ export const InstallModal: React.FC = () => {
   if (!showInstallModal) return null;
 
   const handleInstallClick = async () => {
+    if (isInstalling) return;
+
     setIsInstalling(true);
+
     try {
       const result = await installAppPrompt();
-      if (result === 'manual_needed' || !isInstallable) {
+
+      if (result === 'manual_needed') {
         setShowManualGuide(true);
-      } else if (result === 'installed') {
-        // Handled in context
+        return;
       }
-    } catch (err) {
-      console.error('Install click error:', err);
+
+      if (result === 'dismissed') {
+        return;
+      }
+
+      if (result === 'accepted') {
+        setShowInstallModal(false);
+        return;
+      }
+
+      if (result === 'installed') {
+        setShowInstallModal(false);
+      }
+    } catch (error) {
+      console.error(
+        'Error al instalar Baby Chef:',
+        error
+      );
+
       setShowManualGuide(true);
     } finally {
       setIsInstalling(false);
@@ -276,17 +296,33 @@ export const InstallModal: React.FC = () => {
                 </div>
               </div>
 
-              {/* Single 1-Click Install Button */}
-              <button
-                id="direct-pwa-install-button"
-                type="button"
-                onClick={handleInstallClick}
-                disabled={isInstalling}
-                className="w-full py-3.5 px-5 bg-gradient-to-r from-[#FF7043] via-[#FF5722] to-[#E64A19] hover:opacity-95 text-white font-black text-sm rounded-2xl shadow-lg shadow-orange-500/25 flex items-center justify-center gap-2 active-press transition-all"
-              >
-                <Download className={`w-5 h-5 ${isInstalling ? 'animate-bounce' : ''}`} />
-                <span>{isInstalling ? 'PREPARANDO INSTALACIÓN...' : 'INSTALAR EN EL CELULAR'}</span>
-              </button>
+              {/* Conditional Install or Fallback Button based on isInstallable */}
+              {isInstallable ? (
+                <button
+                  id="direct-pwa-install-button"
+                  type="button"
+                  onClick={handleInstallClick}
+                  disabled={isInstalling}
+                  className="w-full py-3.5 px-5 bg-gradient-to-r from-[#FF7043] via-[#FF5722] to-[#E64A19] hover:opacity-95 text-white font-black text-sm rounded-2xl shadow-lg shadow-orange-500/25 flex items-center justify-center gap-2 active-press transition-all"
+                >
+                  <Download className={`w-5 h-5 ${isInstalling ? 'animate-bounce' : ''}`} />
+                  <span>{isInstalling ? 'PREPARANDO INSTALACIÓN...' : 'INSTALAR EN EL CELULAR'}</span>
+                </button>
+              ) : (
+                <div className="space-y-2">
+                  <div className="py-2.5 px-3 bg-stone-100/90 rounded-2xl text-xs font-medium text-stone-600 border border-stone-200/60">
+                    La instalación automática todavía no está disponible
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowManualGuide(true)}
+                    className="w-full py-3 px-4 bg-stone-800 hover:bg-stone-900 text-white font-bold text-xs rounded-2xl shadow-sm flex items-center justify-center gap-2 active-press transition-all"
+                  >
+                    <span>Ver otras opciones</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
 
               <div className="flex items-center justify-between text-xs px-1">
                 <button

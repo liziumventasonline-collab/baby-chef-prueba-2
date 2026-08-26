@@ -61,7 +61,7 @@ interface AppContextType {
   completeOnboarding: (profileData: Partial<BabyProfile>) => void;
   showInstallModal: boolean;
   setShowInstallModal: (show: boolean) => void;
-  installAppPrompt: () => Promise<'prompted' | 'manual_needed' | 'installed' | 'error' | void>;
+  installAppPrompt: () => Promise<'accepted' | 'dismissed' | 'manual_needed' | 'installed'>;
   isPWAInstalled: boolean;
   isInstallable: boolean;
   resetAllData: () => void;
@@ -157,53 +157,52 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   // PWA beforeinstallprompt handler & display-mode check
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(() => {
-    return (window as any).deferredPWAInstallPrompt || null;
-  });
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 
   useEffect(() => {
-    // Check if early prompt already captured
-    if ((window as any).deferredPWAInstallPrompt) {
-      setDeferredPrompt((window as any).deferredPWAInstallPrompt);
-      setIsInstallable(true);
-    }
+    const standalone =
+      window.matchMedia('(display-mode: standalone)').matches ||
+      (window.navigator as any).standalone === true;
 
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
-      (window.navigator as any).standalone === true ||
-      document.referrer.includes('android-app://');
-    if (isStandalone) {
+    if (standalone) {
       setIsPWAInstalled(true);
+      setIsInstallable(false);
     }
 
-    const handleBeforeInstallPrompt = (e: Event) => {
-      e.preventDefault();
-      (window as any).deferredPWAInstallPrompt = e;
-      setDeferredPrompt(e);
-      setIsInstallable(true);
-    };
+    const handleBeforeInstallPrompt = (event: Event) => {
+      event.preventDefault();
 
-    const handlePromptAvailable = (e: any) => {
-      if (e && e.detail) {
-        setDeferredPrompt(e.detail);
-        setIsInstallable(true);
-      }
+      setDeferredPrompt(event);
+      setIsInstallable(true);
     };
 
     const handleAppInstalled = () => {
       setIsPWAInstalled(true);
       setIsInstallable(false);
       setDeferredPrompt(null);
-      (window as any).deferredPWAInstallPrompt = null;
+      setShowInstallModal(false);
     };
 
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    window.addEventListener('pwa-prompt-available', handlePromptAvailable);
-    window.addEventListener('appinstalled', handleAppInstalled);
+    window.addEventListener(
+      'beforeinstallprompt',
+      handleBeforeInstallPrompt
+    );
+
+    window.addEventListener(
+      'appinstalled',
+      handleAppInstalled
+    );
 
     return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-      window.removeEventListener('pwa-prompt-available', handlePromptAvailable);
-      window.removeEventListener('appinstalled', handleAppInstalled);
+      window.removeEventListener(
+        'beforeinstallprompt',
+        handleBeforeInstallPrompt
+      );
+
+      window.removeEventListener(
+        'appinstalled',
+        handleAppInstalled
+      );
     };
   }, []);
 
@@ -435,41 +434,49 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setFoodsTracker(prev => [...prev, newItem]);
   };
 
-  const installAppPrompt = async (): Promise<'prompted' | 'manual_needed' | 'installed' | 'error'> => {
-    // 1. Check if already running in standalone PWA mode
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+  const installAppPrompt = async (): Promise<
+    'accepted' |
+    'dismissed' |
+    'manual_needed' |
+    'installed'
+  > => {
+    const standalone =
+      window.matchMedia('(display-mode: standalone)').matches ||
       (window.navigator as any).standalone === true;
-    if (isStandalone) {
+
+    if (standalone) {
       setIsPWAInstalled(true);
       return 'installed';
     }
 
-    // 2. Check if native prompt is available
-    const promptEvent = deferredPrompt || (window as any).deferredPWAInstallPrompt;
-    if (promptEvent && typeof promptEvent.prompt === 'function') {
-      try {
-        await promptEvent.prompt();
-        const choice = await promptEvent.userChoice;
-        if (choice && choice.outcome === 'accepted') {
-          setIsPWAInstalled(true);
-          setDeferredPrompt(null);
-          (window as any).deferredPWAInstallPrompt = null;
-          setShowInstallModal(false);
-          return 'installed';
-        }
-        return 'prompted';
-      } catch (err) {
-        console.error('PWA prompt error:', err);
-        return 'manual_needed';
-      }
+    if (!deferredPrompt) {
+      return 'manual_needed';
     }
 
-    // 3. Fallback: prompt not supported directly (e.g. iOS Safari, Chrome evaluated menu, or iframe)
-    const isIframe = window.self !== window.top;
-    if (isIframe) {
-      window.open(window.location.href, '_blank');
+    try {
+      await deferredPrompt.prompt();
+
+      const choice = await deferredPrompt.userChoice;
+
+      setDeferredPrompt(null);
+      setIsInstallable(false);
+
+      if (choice?.outcome === 'accepted') {
+        return 'accepted';
+      }
+
+      return 'dismissed';
+    } catch (error) {
+      console.error(
+        'Error al mostrar instalación PWA:',
+        error
+      );
+
+      setDeferredPrompt(null);
+      setIsInstallable(false);
+
+      return 'manual_needed';
     }
-    return 'manual_needed';
   };
 
   const resetAllData = () => {
@@ -520,7 +527,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setShowInstallModal,
         installAppPrompt,
         isPWAInstalled,
-        isInstallable: !!deferredPrompt || isInstallable,
+        isInstallable,
         resetAllData
       }}
     >
