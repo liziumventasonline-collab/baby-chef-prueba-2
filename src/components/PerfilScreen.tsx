@@ -151,8 +151,8 @@ export const PerfilScreen: React.FC = () => {
   };
 
   // Weight and height gained since birth
-  const weightDiff = (latestRecord.weightKg - baby.birthWeight).toFixed(2);
-  const heightDiff = (latestRecord.heightCm - baby.birthHeight).toFixed(1);
+  const weightDiff = +(latestRecord.weightKg - baby.birthWeight).toFixed(3);
+  const heightDiff = +(latestRecord.heightCm - baby.birthHeight).toFixed(1);
 
   // Evaluation of latest weight
   const latestWeightEvaluation = evaluateGrowthParameter(
@@ -164,15 +164,21 @@ export const PerfilScreen: React.FC = () => {
 
   const handleSaveMeasurement = (e: React.FormEvent) => {
     e.preventDefault();
-    const w = parseFloat(newWeight);
-    const h = parseFloat(newHeight);
-    const head = newHead ? parseFloat(newHead) : undefined;
+    const w = parseFloat(newWeight.toString().trim().replace(',', '.'));
+    const h = parseFloat(newHeight.toString().trim().replace(',', '.'));
+    const head = newHead ? parseFloat(newHead.toString().trim().replace(',', '.')) : undefined;
 
-    if (isNaN(w) || isNaN(h)) return;
+    if (isNaN(w) || isNaN(h) || w <= 0 || h <= 0) return;
+    if (w < 0.5 || w > 40 || h < 30 || h > 140) return;
+    if (head !== undefined && (isNaN(head) || head < 20 || head > 70)) return;
+
+    const recordDate = new Date(newDate);
+    const birth = new Date(baby.birthDate);
+    const diffMonths = Math.max(0, Math.round((recordDate.getTime() - birth.getTime()) / (1000 * 60 * 60 * 24 * 30.4375)));
 
     addGrowthRecord({
       date: newDate,
-      ageMonths: age.months,
+      ageMonths: diffMonths,
       weightKg: w,
       heightCm: h,
       headCircumferenceCm: head,
@@ -195,12 +201,15 @@ export const PerfilScreen: React.FC = () => {
 
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
+    const bw = parseFloat(editBirthWeight.toString().trim().replace(',', '.'));
+    const bh = parseFloat(editBirthHeight.toString().trim().replace(',', '.'));
+
     updateBaby({
       name: editName.trim() || 'Mi Bebé',
       gender: editGender,
       birthDate: editBirthDate,
-      birthWeight: parseFloat(editBirthWeight) || baby.birthWeight,
-      birthHeight: parseFloat(editBirthHeight) || baby.birthHeight
+      birthWeight: !isNaN(bw) && bw > 0 ? bw : baby.birthWeight,
+      birthHeight: !isNaN(bh) && bh > 0 ? bh : baby.birthHeight
     });
     setShowEditProfileModal(false);
   };
@@ -473,12 +482,12 @@ export const PerfilScreen: React.FC = () => {
             </span>
             <div className="flex items-baseline gap-1">
               <span className="text-2xl font-black text-[#292524]">
-                {latestRecord.weightKg.toFixed(2)}
+                {latestRecord.weightKg}
               </span>
               <span className="text-xs font-semibold text-[#78716C]">kg</span>
             </div>
             <span className="text-[11px] font-bold text-[#4A7C59] block mt-1">
-              +{weightDiff} kg desde nacer
+              {weightDiff >= 0 ? `+${weightDiff}` : weightDiff} kg desde nacer
             </span>
           </div>
 
@@ -493,7 +502,7 @@ export const PerfilScreen: React.FC = () => {
               <span className="text-xs font-semibold text-[#78716C]">cm</span>
             </div>
             <span className="text-[11px] font-bold text-[#4A7C59] block mt-1">
-              +{heightDiff} cm desde nacer
+              {heightDiff >= 0 ? `+${heightDiff}` : heightDiff} cm desde nacer
             </span>
           </div>
 
@@ -626,13 +635,14 @@ export const PerfilScreen: React.FC = () => {
                     </label>
                     <input
                       type="number"
-                      step="0.01"
-                      min="1"
-                      max="25"
+                      step="any"
+                      inputMode="decimal"
+                      min="0.5"
+                      max="35"
                       value={newWeight}
                       onChange={e => setNewWeight(e.target.value)}
                       required
-                      placeholder="Ej. 7.95"
+                      placeholder="Ej. 6.430"
                       className="w-full px-3.5 py-2.5 bg-[#FAF7F2] rounded-xl border border-[#E7E5E4] text-sm font-semibold"
                     />
                   </div>
@@ -643,13 +653,14 @@ export const PerfilScreen: React.FC = () => {
                     </label>
                     <input
                       type="number"
-                      step="0.1"
-                      min="35"
-                      max="110"
+                      step="any"
+                      inputMode="decimal"
+                      min="30"
+                      max="130"
                       value={newHeight}
                       onChange={e => setNewHeight(e.target.value)}
                       required
-                      placeholder="Ej. 67.5"
+                      placeholder="Ej. 63.5"
                       className="w-full px-3.5 py-2.5 bg-[#FAF7F2] rounded-xl border border-[#E7E5E4] text-sm font-semibold"
                     />
                   </div>
@@ -661,12 +672,13 @@ export const PerfilScreen: React.FC = () => {
                   </label>
                   <input
                     type="number"
-                    step="0.1"
-                    min="25"
-                    max="60"
+                    step="any"
+                    inputMode="decimal"
+                    min="20"
+                    max="65"
                     value={newHead}
                     onChange={e => setNewHead(e.target.value)}
-                    placeholder="Ej. 43.5"
+                    placeholder="Ej. 42.7"
                     className="w-full px-3.5 py-2.5 bg-[#FAF7F2] rounded-xl border border-[#E7E5E4] text-sm font-semibold"
                   />
                 </div>
@@ -837,7 +849,10 @@ export const PerfilScreen: React.FC = () => {
                     </label>
                     <input
                       type="number"
-                      step="0.01"
+                      step="any"
+                      inputMode="decimal"
+                      min="0.5"
+                      max="10"
                       value={editBirthWeight}
                       onChange={e => setEditBirthWeight(e.target.value)}
                       required
@@ -851,7 +866,10 @@ export const PerfilScreen: React.FC = () => {
                     </label>
                     <input
                       type="number"
-                      step="0.5"
+                      step="any"
+                      inputMode="decimal"
+                      min="20"
+                      max="80"
                       value={editBirthHeight}
                       onChange={e => setEditBirthHeight(e.target.value)}
                       required

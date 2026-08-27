@@ -166,11 +166,13 @@ export const HomeScreen: React.FC = () => {
 
   const handleSaveMeasurement = (e: React.FormEvent) => {
     e.preventDefault();
-    const w = parseFloat(newWeight);
-    const h = parseFloat(newHeight);
-    const head = newHead ? parseFloat(newHead) : undefined;
+    const w = parseFloat(newWeight.toString().trim().replace(',', '.'));
+    const h = parseFloat(newHeight.toString().trim().replace(',', '.'));
+    const head = newHead ? parseFloat(newHead.toString().trim().replace(',', '.')) : undefined;
 
-    if (!w || !h) return;
+    if (isNaN(w) || isNaN(h) || w <= 0 || h <= 0) return;
+    if (w < 0.5 || w > 40 || h < 30 || h > 140) return;
+    if (head !== undefined && (isNaN(head) || head < 20 || head > 70)) return;
 
     const recordDate = new Date(newDate);
     const birth = new Date(baby.birthDate);
@@ -201,12 +203,15 @@ export const HomeScreen: React.FC = () => {
 
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
+    const bw = parseFloat(editBirthWeight.toString().trim().replace(',', '.'));
+    const bh = parseFloat(editBirthHeight.toString().trim().replace(',', '.'));
+
     updateBaby({
       name: editName.trim() || 'Mi Bebé',
       gender: editGender,
       birthDate: editBirthDate,
-      birthWeight: parseFloat(editBirthWeight) || 3.2,
-      birthHeight: parseFloat(editBirthHeight) || 50
+      birthWeight: !isNaN(bw) && bw > 0 ? bw : 3.2,
+      birthHeight: !isNaN(bh) && bh > 0 ? bh : 50
     });
     setShowEditProfileModal(false);
   };
@@ -592,13 +597,14 @@ export const HomeScreen: React.FC = () => {
                     </label>
                     <input
                       type="number"
-                      step="0.05"
-                      min="1"
-                      max="30"
+                      step="any"
+                      inputMode="decimal"
+                      min="0.5"
+                      max="35"
                       value={newWeight}
                       onChange={(e) => setNewWeight(e.target.value)}
                       required
-                      placeholder="Ej. 8.2"
+                      placeholder="Ej. 6.430"
                       className="w-full p-2.5 rounded-xl border border-stone-200 text-xs font-bold text-stone-900 focus:outline-none focus:border-emerald-500"
                     />
                   </div>
@@ -609,13 +615,14 @@ export const HomeScreen: React.FC = () => {
                     </label>
                     <input
                       type="number"
-                      step="0.5"
-                      min="35"
-                      max="120"
+                      step="any"
+                      inputMode="decimal"
+                      min="30"
+                      max="130"
                       value={newHeight}
                       onChange={(e) => setNewHeight(e.target.value)}
                       required
-                      placeholder="Ej. 68.5"
+                      placeholder="Ej. 63.5"
                       className="w-full p-2.5 rounded-xl border border-stone-200 text-xs font-bold text-stone-900 focus:outline-none focus:border-emerald-500"
                     />
                   </div>
@@ -627,12 +634,13 @@ export const HomeScreen: React.FC = () => {
                   </label>
                   <input
                     type="number"
-                    step="0.1"
-                    min="25"
-                    max="60"
+                    step="any"
+                    inputMode="decimal"
+                    min="20"
+                    max="65"
                     value={newHead}
                     onChange={(e) => setNewHead(e.target.value)}
-                    placeholder="Ej. 43.5"
+                    placeholder="Ej. 42.7"
                     className="w-full p-2.5 rounded-xl border border-stone-200 text-xs font-medium text-stone-900 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
@@ -762,7 +770,10 @@ export const HomeScreen: React.FC = () => {
                     </label>
                     <input
                       type="number"
-                      step="0.05"
+                      step="any"
+                      inputMode="decimal"
+                      min="0.5"
+                      max="10"
                       value={editBirthWeight}
                       onChange={(e) => setEditBirthWeight(e.target.value)}
                       required
@@ -776,7 +787,10 @@ export const HomeScreen: React.FC = () => {
                     </label>
                     <input
                       type="number"
-                      step="0.5"
+                      step="any"
+                      inputMode="decimal"
+                      min="20"
+                      max="80"
                       value={editBirthHeight}
                       onChange={(e) => setEditBirthHeight(e.target.value)}
                       required
