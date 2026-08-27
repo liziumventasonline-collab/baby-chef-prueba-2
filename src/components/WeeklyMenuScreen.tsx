@@ -346,6 +346,20 @@ export const WeeklyMenuScreen: React.FC<WeeklyMenuScreenProps> = ({ onBack }) =>
             animate={{ opacity: 1, y: 0 }}
             className="space-y-4"
           >
+            {/* Letter for Mom */}
+            <div className="bg-white rounded-3xl p-5 border border-stone-200/80 shadow-2xs space-y-3">
+              <div className="flex items-center gap-2 text-rose-600 font-black text-lg">
+                <Heart className="w-5 h-5 fill-rose-500 text-rose-500" />
+                <h3>{PLANNER_WELCOME.title}</h3>
+              </div>
+              <p className="text-xs text-stone-700 leading-relaxed font-normal">
+                {PLANNER_WELCOME.body}
+              </p>
+              <div className="p-4 bg-amber-50/80 rounded-2xl border border-amber-100 text-amber-950 text-xs font-semibold text-center italic">
+                “{PLANNER_WELCOME.quote}”
+              </div>
+            </div>
+
             {/* Visual Cover Poster Card */}
             <div className="bg-gradient-to-br from-amber-400 via-orange-500 to-teal-600 rounded-3xl p-6 text-white text-center shadow-lg relative overflow-hidden">
               <div className="absolute top-2 right-2 text-6xl opacity-20 pointer-events-none">🍼</div>
@@ -365,20 +379,6 @@ export const WeeklyMenuScreen: React.FC<WeeklyMenuScreenProps> = ({ onBack }) =>
                 <span>EMPEZAR CON SEMANA 1</span>
                 <ChevronRight className="w-4 h-4" />
               </button>
-            </div>
-
-            {/* Letter for Mom */}
-            <div className="bg-white rounded-3xl p-5 border border-stone-200/80 shadow-2xs space-y-3">
-              <div className="flex items-center gap-2 text-rose-600 font-black text-lg">
-                <Heart className="w-5 h-5 fill-rose-500 text-rose-500" />
-                <h3>{PLANNER_WELCOME.title}</h3>
-              </div>
-              <p className="text-xs text-stone-700 leading-relaxed font-normal">
-                {PLANNER_WELCOME.body}
-              </p>
-              <div className="p-4 bg-amber-50/80 rounded-2xl border border-amber-100 text-amber-950 text-xs font-semibold text-center italic">
-                “{PLANNER_WELCOME.quote}”
-              </div>
             </div>
           </motion.div>
         )}
