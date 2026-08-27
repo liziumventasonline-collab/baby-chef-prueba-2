@@ -1,7 +1,7 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
 import { calculateBabyAge } from '../utils/helpers';
-import { Download, Sparkles, ShoppingBag, Heart } from 'lucide-react';
+import { ShoppingBag } from 'lucide-react';
 
 interface TopHeaderProps {
   title?: string;
@@ -11,10 +11,6 @@ interface TopHeaderProps {
 export const TopHeader: React.FC<TopHeaderProps> = ({ title, onOpenShopping }) => {
   const {
     baby,
-    isPWAInstalled,
-    isInstallable,
-    setShowInstallModal,
-    installAppPrompt,
     shoppingList,
     setExtendedView,
     setActiveTab
@@ -75,7 +71,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({ title, onOpenShopping }) =
         </h1>
       )}
 
-      {/* Right Actions: Shopping List + Install Button */}
+      {/* Right Actions: Shopping List */}
       <div className="flex items-center gap-1.5">
         {/* Shopping list quick badge */}
         <button
@@ -97,25 +93,6 @@ export const TopHeader: React.FC<TopHeaderProps> = ({ title, onOpenShopping }) =
             </span>
           )}
         </button>
-
-        {/* Install button pill (if not yet installed) */}
-        {!isPWAInstalled && (
-          <button
-            id="top-install-app-btn"
-            onClick={() => {
-              if (isInstallable) {
-                installAppPrompt();
-              } else {
-                setShowInstallModal(true);
-              }
-            }}
-            className="flex items-center gap-1.5 py-1.5 px-3.5 rounded-full bg-gradient-to-r from-[#FF7043] to-[#E64A19] text-white text-xs font-black active-press shadow-sm hover:opacity-95 transition-all"
-            title="Instalar Baby Chef en tu celular"
-          >
-            <Download className="w-3.5 h-3.5" />
-            <span className="inline">Instalar</span>
-          </button>
-        )}
       </div>
     </header>
   );
