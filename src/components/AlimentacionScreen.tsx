@@ -42,12 +42,33 @@ export const AlimentacionScreen: React.FC = () => {
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Default to baby's actual stage if not set
+  // Validate selectedStageMonth range [6..12] and default to baby's real stage if unset or out of range
   useEffect(() => {
-    if (!selectedStageMonth) {
+    if (!selectedStageMonth || selectedStageMonth < 6 || selectedStageMonth > 12) {
       setSelectedStageMonth(babyActualStage);
     }
   }, [babyActualStage, selectedStageMonth, setSelectedStageMonth]);
+
+  // Smoothly scroll horizontal months bar so the active / current month is visible and centered
+  useEffect(() => {
+    const targetMonth = selectedStageMonth || babyActualStage;
+    const scrollActivePillIntoView = () => {
+      if (scrollRef.current) {
+        const activePill = scrollRef.current.querySelector<HTMLElement>(`#stage-month-pill-${targetMonth}`);
+        if (activePill) {
+          activePill.scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest',
+            inline: 'center'
+          });
+        }
+      }
+    };
+
+    scrollActivePillIntoView();
+    const timer = setTimeout(scrollActivePillIntoView, 120);
+    return () => clearTimeout(timer);
+  }, [selectedStageMonth, babyActualStage]);
 
   const currentStage = FEEDING_STAGES.find((s) => s.month === selectedStageMonth) || FEEDING_STAGES[0];
   const stageRecipesCount = recipes.filter((r) => r.stageMonths <= selectedStageMonth).length;
@@ -109,39 +130,53 @@ export const AlimentacionScreen: React.FC = () => {
         </div>
       </div>
 
-      {/* 1. Horizontal Scrollable Month Selector */}
-      <div
-        ref={scrollRef}
-        className="flex items-center gap-2 overflow-x-auto no-scrollbar py-2 -mx-4 px-4 sticky top-14 bg-white/90 backdrop-blur-md z-20 border-b border-rose-100/70 mb-4 shadow-2xs"
-      >
-        {monthsList.map((month) => {
-          const isSelected = selectedStageMonth === month;
-          const isBabyMonth = babyActualStage === month;
+      {/* 1. Horizontal Scrollable Month Selector (in standard flow, never overlaps content on scroll) */}
+      <div className="mb-4">
+        <div className="flex items-center justify-between mb-1.5 px-0.5">
+          <span className="text-[11px] font-black uppercase tracking-wider text-stone-500">
+            Etapa por Meses
+          </span>
+          <span className="text-[10.5px] font-bold text-stone-400">
+            Desliza para ver más →
+          </span>
+        </div>
+        <div
+          ref={scrollRef}
+          className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1.5 -mx-4 px-4 scroll-smooth"
+        >
+          {monthsList.map((month) => {
+            const isSelected = selectedStageMonth === month;
+            const isBabyMonth = babyActualStage === month;
 
-          return (
-            <button
-              key={month}
-              id={`stage-month-pill-${month}`}
-              onClick={() => setSelectedStageMonth(month)}
-              className={`relative px-4 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap active-press transition-all shrink-0 flex items-center gap-1.5 ${
-                isSelected
-                  ? 'bg-emerald-600 text-white shadow-md shadow-emerald-900/20 scale-102'
-                  : 'bg-white text-stone-700 border border-stone-200 hover:border-emerald-300'
-              }`}
-            >
-              <span>{month === 12 ? '12 meses+' : `${month} meses`}</span>
-              {isBabyMonth && (
-                <span
-                  className={`text-[9px] px-1.5 py-0.2 rounded-full font-bold uppercase tracking-tight ${
-                    isSelected ? 'bg-white text-emerald-800' : 'bg-emerald-100 text-emerald-800'
-                  }`}
-                >
-                  Actual
-                </span>
-              )}
-            </button>
-          );
-        })}
+            return (
+              <button
+                key={month}
+                id={`stage-month-pill-${month}`}
+                onClick={() => setSelectedStageMonth(month)}
+                className={`relative px-4 py-2.5 rounded-2xl text-xs font-black whitespace-nowrap active-press transition-all shrink-0 flex items-center gap-2 shadow-xs ${
+                  isSelected
+                    ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md shadow-emerald-900/20 scale-[1.02] ring-2 ring-emerald-500/40'
+                    : isBabyMonth
+                      ? 'bg-emerald-50 text-emerald-900 border-2 border-emerald-500/80 hover:bg-emerald-100/80'
+                      : 'bg-white text-stone-700 border border-stone-200/90 hover:border-emerald-300'
+                }`}
+              >
+                <span>{month === 12 ? '12 meses+' : `${month} meses`}</span>
+                {isBabyMonth && (
+                  <span
+                    className={`text-[9px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider shadow-2xs ${
+                      isSelected
+                        ? 'bg-white text-emerald-800'
+                        : 'bg-emerald-600 text-white'
+                    }`}
+                  >
+                    Actual
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Stage Content with Animated Transition */}
@@ -158,10 +193,21 @@ export const AlimentacionScreen: React.FC = () => {
           <div className="bg-white rounded-3xl p-5 border border-stone-200/80 shadow-2xs">
             <div className="flex items-start justify-between gap-2 mb-2">
               <div>
-                <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100">
-                  Etapa {currentStage.label}
-                </span>
-                <h3 className="text-xl font-extrabold text-stone-900 font-display mt-1.5">
+                <div className="flex flex-wrap items-center gap-1.5 mb-1.5">
+                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100">
+                    Etapa {currentStage.label}
+                  </span>
+                  {selectedStageMonth === babyActualStage ? (
+                    <span className="text-[10px] font-black uppercase tracking-wide text-emerald-700 bg-emerald-100/90 px-2 py-0.5 rounded-full border border-emerald-200/80 flex items-center gap-1">
+                      <span>★</span> Edad actual de {baby.name}
+                    </span>
+                  ) : (
+                    <span className="text-[10px] font-bold text-stone-500 bg-stone-100 px-2 py-0.5 rounded-full border border-stone-200/70">
+                      Consultando otra etapa ({baby.name} tiene {age.displayText})
+                    </span>
+                  )}
+                </div>
+                <h3 className="text-xl font-extrabold text-stone-900 font-display">
                   {currentStage.title}
                 </h3>
               </div>

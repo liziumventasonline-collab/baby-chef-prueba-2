@@ -8,7 +8,7 @@ import {
   TabType,
   ExtendedViewType
 } from '../types';
-import { DEFAULT_BABY_PROFILE, DEFAULT_GROWTH_RECORDS } from '../utils/helpers';
+import { DEFAULT_BABY_PROFILE, DEFAULT_GROWTH_RECORDS, calculateBabyAge, getRecommendedStageMonth } from '../utils/helpers';
 import { RECIPES_DATA } from '../data/recipes';
 import { DEFAULT_FOODS_LIST } from '../data/foodsList';
 
@@ -79,19 +79,6 @@ const STORAGE_KEYS = {
 };
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // App navigation state
-  const [activeTab, setActiveTab] = useState<TabType>('inicio');
-  const [extendedView, setExtendedView] = useState<ExtendedViewType>('none');
-  const [selectedRecipeId, setSelectedRecipeId] = useState<string | null>(null);
-  const [selectedStageMonth, setSelectedStageMonth] = useState<number>(6);
-
-  // Splash & Onboarding
-  const [showSplash, setShowSplash] = useState<boolean>(true);
-  const [showOnboarding, setShowOnboarding] = useState<boolean>(false);
-  const [showInstallModal, setShowInstallModal] = useState<boolean>(false);
-  const [isPWAInstalled, setIsPWAInstalled] = useState<boolean>(false);
-  const [isInstallable, setIsInstallable] = useState<boolean>(false);
-
   // Baby Profile state
   const [baby, setBaby] = useState<BabyProfile>(() => {
     try {
@@ -102,6 +89,37 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
     return DEFAULT_BABY_PROFILE;
   });
+
+  // App navigation state
+  const [activeTab, setActiveTab] = useState<TabType>('inicio');
+  const [extendedView, setExtendedView] = useState<ExtendedViewType>('none');
+  const [selectedRecipeId, setSelectedRecipeId] = useState<string | null>(null);
+
+  // Initialize selectedStageMonth automatically based on baby's real age
+  const [selectedStageMonth, setSelectedStageMonth] = useState<number>(() => {
+    try {
+      const initialAge = calculateBabyAge(baby.birthDate);
+      return getRecommendedStageMonth(initialAge.months);
+    } catch {
+      return 6;
+    }
+  });
+
+  // Splash & Onboarding
+  const [showSplash, setShowSplash] = useState<boolean>(true);
+  const [showOnboarding, setShowOnboarding] = useState<boolean>(false);
+  const [showInstallModal, setShowInstallModal] = useState<boolean>(false);
+  const [isPWAInstalled, setIsPWAInstalled] = useState<boolean>(false);
+  const [isInstallable, setIsInstallable] = useState<boolean>(false);
+
+  // Keep selectedStageMonth valid and updated when baby's birthDate changes
+  useEffect(() => {
+    if (baby.birthDate) {
+      const currentAge = calculateBabyAge(baby.birthDate);
+      const recommended = getRecommendedStageMonth(currentAge.months);
+      setSelectedStageMonth(recommended);
+    }
+  }, [baby.birthDate]);
 
   // Growth Records (Only 1 initial baseline measurement at start)
   const [growthRecords, setGrowthRecords] = useState<GrowthRecord[]>(() => {
