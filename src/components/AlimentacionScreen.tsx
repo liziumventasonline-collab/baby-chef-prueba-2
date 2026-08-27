@@ -40,21 +40,24 @@ export const AlimentacionScreen: React.FC = () => {
   const age = calculateBabyAge(baby.birthDate);
   const babyActualStage = getRecommendedStageMonth(age.months);
 
-  const scrollRef = useRef<HTMLDivElement>(null);
+  // Active month: if user selected a month during this session, use it; otherwise automatically use babyActualStage
+  const activeStageMonth =
+    selectedStageMonth !== null && selectedStageMonth >= 6 && selectedStageMonth <= 12
+      ? selectedStageMonth
+      : babyActualStage;
 
-  // Validate selectedStageMonth range [6..12] and default to baby's real stage if unset or out of range
-  useEffect(() => {
-    if (!selectedStageMonth || selectedStageMonth < 6 || selectedStageMonth > 12) {
-      setSelectedStageMonth(babyActualStage);
-    }
-  }, [babyActualStage, selectedStageMonth, setSelectedStageMonth]);
+  const currentStage = FEEDING_STAGES.find((s) => s.month === activeStageMonth) || FEEDING_STAGES[0];
+  const stageRecipesCount = recipes.filter((r) => r.stageMonths <= activeStageMonth).length;
+
+  const monthsList = [6, 7, 8, 9, 10, 11, 12];
+
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   // Smoothly scroll horizontal months bar so the active / current month is visible and centered
   useEffect(() => {
-    const targetMonth = selectedStageMonth || babyActualStage;
     const scrollActivePillIntoView = () => {
       if (scrollRef.current) {
-        const activePill = scrollRef.current.querySelector<HTMLElement>(`#stage-month-pill-${targetMonth}`);
+        const activePill = scrollRef.current.querySelector<HTMLElement>(`#stage-month-pill-${activeStageMonth}`);
         if (activePill) {
           activePill.scrollIntoView({
             behavior: 'smooth',
@@ -68,12 +71,7 @@ export const AlimentacionScreen: React.FC = () => {
     scrollActivePillIntoView();
     const timer = setTimeout(scrollActivePillIntoView, 120);
     return () => clearTimeout(timer);
-  }, [selectedStageMonth, babyActualStage]);
-
-  const currentStage = FEEDING_STAGES.find((s) => s.month === selectedStageMonth) || FEEDING_STAGES[0];
-  const stageRecipesCount = recipes.filter((r) => r.stageMonths <= selectedStageMonth).length;
-
-  const monthsList = [6, 7, 8, 9, 10, 11, 12];
+  }, [activeStageMonth]);
 
   const getCategoryIcon = (iconName: string) => {
     switch (iconName) {
@@ -145,7 +143,7 @@ export const AlimentacionScreen: React.FC = () => {
           className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1.5 -mx-4 px-4 scroll-smooth"
         >
           {monthsList.map((month) => {
-            const isSelected = selectedStageMonth === month;
+            const isSelected = activeStageMonth === month;
             const isBabyMonth = babyActualStage === month;
 
             return (
@@ -182,7 +180,7 @@ export const AlimentacionScreen: React.FC = () => {
       {/* Stage Content with Animated Transition */}
       <AnimatePresence mode="wait">
         <motion.div
-          key={selectedStageMonth}
+          key={activeStageMonth}
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
@@ -197,7 +195,7 @@ export const AlimentacionScreen: React.FC = () => {
                   <span className="text-[11px] font-extrabold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100">
                     Etapa {currentStage.label}
                   </span>
-                  {selectedStageMonth === babyActualStage ? (
+                  {activeStageMonth === babyActualStage ? (
                     <span className="text-[10px] font-black uppercase tracking-wide text-emerald-700 bg-emerald-100/90 px-2 py-0.5 rounded-full border border-emerald-200/80 flex items-center gap-1">
                       <span>★</span> Edad actual de {baby.name}
                     </span>

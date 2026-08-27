@@ -20,8 +20,8 @@ interface AppContextType {
   setExtendedView: (view: ExtendedViewType) => void;
   selectedRecipeId: string | null;
   setSelectedRecipeId: (id: string | null) => void;
-  selectedStageMonth: number;
-  setSelectedStageMonth: (month: number) => void;
+  selectedStageMonth: number | null;
+  setSelectedStageMonth: (month: number | null) => void;
 
   // Baby Profile & Growth
   baby: BabyProfile;
@@ -95,15 +95,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [extendedView, setExtendedView] = useState<ExtendedViewType>('none');
   const [selectedRecipeId, setSelectedRecipeId] = useState<string | null>(null);
 
-  // Initialize selectedStageMonth automatically based on baby's real age
-  const [selectedStageMonth, setSelectedStageMonth] = useState<number>(() => {
-    try {
-      const initialAge = calculateBabyAge(baby.birthDate);
-      return getRecommendedStageMonth(initialAge.months);
-    } catch {
-      return 6;
-    }
-  });
+  // In-session manual stage month selection (null = default to baby's actual age stage)
+  const [selectedStageMonth, setSelectedStageMonth] = useState<number | null>(null);
 
   // Splash & Onboarding
   const [showSplash, setShowSplash] = useState<boolean>(true);
@@ -112,14 +105,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isPWAInstalled, setIsPWAInstalled] = useState<boolean>(false);
   const [isInstallable, setIsInstallable] = useState<boolean>(false);
 
-  // Keep selectedStageMonth valid and updated when baby's birthDate changes
+  // Reset in-session manual stage selection if baby profile birth date changes
   useEffect(() => {
-    if (baby.birthDate) {
-      const currentAge = calculateBabyAge(baby.birthDate);
-      const recommended = getRecommendedStageMonth(currentAge.months);
-      setSelectedStageMonth(recommended);
-    }
-  }, [baby.birthDate]);
+    setSelectedStageMonth(null);
+  }, [baby?.birthDate]);
 
   // Growth Records (Only 1 initial baseline measurement at start)
   const [growthRecords, setGrowthRecords] = useState<GrowthRecord[]>(() => {

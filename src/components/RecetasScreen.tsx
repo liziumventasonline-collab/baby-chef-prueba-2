@@ -177,7 +177,6 @@ export const RecetasScreen: React.FC = () => {
     setSelectedRecipeId,
     toggleFavorite,
     isFavorite,
-    selectedStageMonth,
     setExtendedView
   } = useApp();
 
