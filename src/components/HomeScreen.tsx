@@ -402,7 +402,7 @@ export const HomeScreen: React.FC = () => {
                   {latestGrowth.weightKg} <span className="text-xs font-bold text-amber-800">kg</span>
                 </p>
                 <p className="text-[10px] text-amber-700 font-bold mt-0.5">
-                  Al nacer: {baby.birthWeight} kg ({+(latestGrowth.weightKg - baby.birthWeight).toFixed(2)} kg)
+                  Al nacer: {baby.birthWeight} kg ({+(latestGrowth.weightKg - baby.birthWeight).toFixed(3)} kg)
                 </p>
               </div>
 

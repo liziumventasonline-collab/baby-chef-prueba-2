@@ -396,7 +396,7 @@ export const PerfilScreen: React.FC = () => {
               Peso
             </span>
             <span className="text-sm font-bold text-[#292524]">
-              {baby.birthWeight.toFixed(2)} kg
+              {baby.birthWeight} kg
             </span>
           </div>
 

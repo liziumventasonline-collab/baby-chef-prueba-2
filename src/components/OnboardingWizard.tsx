@@ -11,9 +11,18 @@ export const OnboardingWizard: React.FC = () => {
   const [step, setStep] = useState<number>(1);
   const [name, setName] = useState<string>(baby.name || 'Mateo');
   const [birthDate, setBirthDate] = useState<string>(baby.birthDate || '2026-02-15');
-  const [birthWeight, setBirthWeight] = useState<number>(baby.birthWeight || 3.25);
-  const [birthHeight, setBirthHeight] = useState<number>(baby.birthHeight || 50);
+  const [birthWeightInput, setBirthWeightInput] = useState<string>(baby.birthWeight ? baby.birthWeight.toString() : '3.250');
+  const [birthHeightInput, setBirthHeightInput] = useState<string>(baby.birthHeight ? baby.birthHeight.toString() : '50');
   const [gender, setGender] = useState<'boy' | 'girl' | 'unspecified'>(baby.gender || 'boy');
+
+  const parseNum = (val: string, fallback: number): number => {
+    const sanitized = val.toString().trim().replace(',', '.');
+    const n = parseFloat(sanitized);
+    return isNaN(n) || n <= 0 ? fallback : n;
+  };
+
+  const currentBirthWeight = parseNum(birthWeightInput, baby.birthWeight || 3.25);
+  const currentBirthHeight = parseNum(birthHeightInput, baby.birthHeight || 50);
 
   const totalSteps = 6;
   const progressPercent = ((step - 1) / (totalSteps - 1)) * 100;
@@ -35,11 +44,14 @@ export const OnboardingWizard: React.FC = () => {
       setStep(prev => prev + 1);
     } else {
       // Complete onboarding
+      const finalWeight = parseNum(birthWeightInput, 3.25);
+      const finalHeight = parseNum(birthHeightInput, 50);
+
       completeOnboarding({
         name: name.trim() || 'Mi Bebé',
         birthDate,
-        birthWeight,
-        birthHeight,
+        birthWeight: finalWeight,
+        birthHeight: finalHeight,
         gender
       });
     }
@@ -226,42 +238,34 @@ export const OnboardingWizard: React.FC = () => {
                 ¿Cuánto pesó al nacer?
               </h2>
               <p className="text-sm text-[#78716C] text-center mb-6">
-                Para su ficha clínica y curva de crecimiento.
+                Escribe el peso exacto del carnet o ficha médica pediátrica (precisión en gramos).
               </p>
 
               <div className="bg-white p-6 rounded-2xl border border-[#E7E5E4] shadow-sm text-center">
-                <div className="flex items-center justify-center gap-2 mb-4">
+                <div className="flex items-center justify-center gap-2 mb-3">
                   <Scale className="w-6 h-6 text-[#E06D53]" />
-                  <span className="text-3xl font-extrabold text-[#292524]">
-                    {birthWeight.toFixed(2)}
+                  <span className="text-xs font-bold text-[#78716C] uppercase tracking-wider">
+                    Peso de nacimiento
                   </span>
-                  <span className="text-lg font-semibold text-[#78716C]">kg</span>
                 </div>
 
-                <div className="flex items-center justify-center gap-4">
-                  <button
-                    type="button"
-                    onClick={() => setBirthWeight(prev => Math.max(1.5, parseFloat((prev - 0.05).toFixed(2))))}
-                    className="w-11 h-11 rounded-full bg-[#FAF7F2] border border-[#E7E5E4] flex items-center justify-center text-xl font-bold text-[#57534E] active-press"
-                  >
-                    -
-                  </button>
+                <div className="relative max-w-[200px] mx-auto mb-2">
                   <input
-                    type="range"
-                    min="1.5"
-                    max="5.5"
-                    step="0.05"
-                    value={birthWeight}
-                    onChange={e => setBirthWeight(parseFloat(e.target.value))}
-                    className="flex-1 accent-[#E06D53] h-2 bg-[#E7E5E4] rounded-lg cursor-pointer"
+                    id="baby-birthweight-input"
+                    type="number"
+                    step="any"
+                    inputMode="decimal"
+                    min="0.5"
+                    max="10"
+                    value={birthWeightInput}
+                    onChange={e => setBirthWeightInput(e.target.value)}
+                    placeholder="Ej. 3.250"
+                    className="w-full text-center text-3xl font-extrabold text-[#292524] bg-[#FAF7F2] py-3 px-3 rounded-2xl border border-[#E7E5E4] focus:outline-none focus:border-[#E06D53] focus:ring-2 focus:ring-[#E06D53]/20"
+                    autoFocus
                   />
-                  <button
-                    type="button"
-                    onClick={() => setBirthWeight(prev => Math.min(6.0, parseFloat((prev + 0.05).toFixed(2))))}
-                    className="w-11 h-11 rounded-full bg-[#FAF7F2] border border-[#E7E5E4] flex items-center justify-center text-xl font-bold text-[#57534E] active-press"
-                  >
-                    +
-                  </button>
+                  <span className="text-xs font-bold text-[#78716C] block mt-1.5">
+                    kilogramos (kg) • ej. 2.935 o 3.120
+                  </span>
                 </div>
               </div>
             </motion.div>
@@ -281,42 +285,34 @@ export const OnboardingWizard: React.FC = () => {
                 ¿Cuánto midió al nacer?
               </h2>
               <p className="text-sm text-[#78716C] text-center mb-6">
-                Talla al momento del nacimiento.
+                Talla al momento del nacimiento con precisión en milímetros.
               </p>
 
               <div className="bg-white p-6 rounded-2xl border border-[#E7E5E4] shadow-sm text-center">
-                <div className="flex items-center justify-center gap-2 mb-4">
+                <div className="flex items-center justify-center gap-2 mb-3">
                   <Ruler className="w-6 h-6 text-[#4A7C59]" />
-                  <span className="text-3xl font-extrabold text-[#292524]">
-                    {birthHeight}
+                  <span className="text-xs font-bold text-[#78716C] uppercase tracking-wider">
+                    Talla / Longitud inicial
                   </span>
-                  <span className="text-lg font-semibold text-[#78716C]">cm</span>
                 </div>
 
-                <div className="flex items-center justify-center gap-4">
-                  <button
-                    type="button"
-                    onClick={() => setBirthHeight(prev => Math.max(35, prev - 1))}
-                    className="w-11 h-11 rounded-full bg-[#FAF7F2] border border-[#E7E5E4] flex items-center justify-center text-xl font-bold text-[#57534E] active-press"
-                  >
-                    -
-                  </button>
+                <div className="relative max-w-[200px] mx-auto mb-2">
                   <input
-                    type="range"
-                    min="35"
-                    max="65"
-                    step="1"
-                    value={birthHeight}
-                    onChange={e => setBirthHeight(parseInt(e.target.value, 10))}
-                    className="flex-1 accent-[#4A7C59] h-2 bg-[#E7E5E4] rounded-lg cursor-pointer"
+                    id="baby-birthheight-input"
+                    type="number"
+                    step="any"
+                    inputMode="decimal"
+                    min="20"
+                    max="80"
+                    value={birthHeightInput}
+                    onChange={e => setBirthHeightInput(e.target.value)}
+                    placeholder="Ej. 50.0"
+                    className="w-full text-center text-3xl font-extrabold text-[#292524] bg-[#FAF7F2] py-3 px-3 rounded-2xl border border-[#E7E5E4] focus:outline-none focus:border-[#4A7C59] focus:ring-2 focus:ring-[#4A7C59]/20"
+                    autoFocus
                   />
-                  <button
-                    type="button"
-                    onClick={() => setBirthHeight(prev => Math.min(65, prev + 1))}
-                    className="w-11 h-11 rounded-full bg-[#FAF7F2] border border-[#E7E5E4] flex items-center justify-center text-xl font-bold text-[#57534E] active-press"
-                  >
-                    +
-                  </button>
+                  <span className="text-xs font-bold text-[#78716C] block mt-1.5">
+                    centímetros (cm) • ej. 48.5 o 51.2
+                  </span>
                 </div>
               </div>
             </motion.div>
@@ -349,11 +345,11 @@ export const OnboardingWizard: React.FC = () => {
                 </div>
                 <div className="flex justify-between items-center text-sm py-1 border-b border-[#F5F5F4]">
                   <span className="text-[#78716C]">Peso al nacer</span>
-                  <span className="font-semibold text-[#292524]">{birthWeight} kg</span>
+                  <span className="font-semibold text-[#292524]">{currentBirthWeight} kg</span>
                 </div>
                 <div className="flex justify-between items-center text-sm py-1">
                   <span className="text-[#78716C]">Talla al nacer</span>
-                  <span className="font-semibold text-[#292524]">{birthHeight} cm</span>
+                  <span className="font-semibold text-[#292524]">{currentBirthHeight} cm</span>
                 </div>
               </div>
 
